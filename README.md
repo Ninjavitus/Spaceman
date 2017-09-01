@@ -1,26 +1,29 @@
-This is a starter template for [Ionic](http://ionicframework.com/docs/) projects.
+## Spaceman/Herogotchi - Tamagotchi RPG with Roguelike & Pokemon elements
 
-## How to use this template
-
-*This template does not work on its own*. The shared files for each starter are found in the [ionic2-app-base repo](https://github.com/ionic-team/ionic2-app-base).
-
-To use this template, either create a new ionic project using the ionic node.js utility, or copy the files from this repository into the [Starter App Base](https://github.com/ionic-team/ionic2-app-base).
-
-### With the Ionic CLI:
-
-Take the name after `ionic2-starter-`, and that is the name of the template to be used when using the `ionic start` command below:
-
+To-do List :
 ```bash
-$ sudo npm install -g ionic cordova
-$ ionic start myBlank blank
+ - Add Pilot creation
+ - Add pet hangar
+ 
+```
+Planned Features :
+```bash
+ - Players create a Pilot at the start of the game. 
+	- Pick a Race and Profession that will affect the stats and abilities of the Pilot's pets.
+	- Can equip pilots with uniforms/hats/other to gain passive bonuses.
+	- Unlock all of the above with in-game money and achivements
+ - Pilots will have 3 VIT. Loses 1 VIT upon a Mech-dying. Can spend 1 VIT to revive Mechs too. 
+	- Forced to retire Pilots upon running out of VIT.
+	- Can gain/craft items to regain VIT or revive dead Mechs.
+ - Players can have up to 3 MECHS
+ - Ability to have more than one Pilot/Character in the future. All pilots will control the same mechs.
+ - Pokemon-esque battle system
+ - Achievement System
+ 
 ```
 
-Then, to run it, cd into `myBlank` and run:
-
 ```bash
-$ ionic cordova platform add ios
-$ ionic cordova run ios
+git clone -b master https://github.com/Ninjavitus/Spaceman.git
 ```
 
-Substitute ios for android if not on a Mac.
-
+iOS and Android probably.
