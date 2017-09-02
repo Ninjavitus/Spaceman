@@ -4,7 +4,7 @@ To-do List :
 ```bash
  - Add Pilot creation
  - Add pet hangar for 3 pets
- 
+ - Add pet hangar
 ```
 Planned Features :
 ```bash
