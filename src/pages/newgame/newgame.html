@@ -1,0 +1,24 @@
+﻿<ion-header>
+</ion-header>
+
+
+<ion-content class="maincontent">
+  <div id="pilotSelectbg" style="text-align:center;">
+  <h1 id="whitetext"><font face="BebasNeue">Choose a gender</font></h1>
+  <button id="genderbuttons" ion-button (click)="setGenderOne('M');">Male</button>
+  <button id="genderbuttons" ion-button (click)="setGenderOne('F');">Female</button>
+    <div class="nameForms">
+      <ion-item>
+        <ion-label stacked>Pilot's name</ion-label>
+        <ion-input id="pilotName" type="text" maxlength="10" value="Pilot" [(ngModel)]="pilotName"></ion-input>
+      </ion-item>
+    </div>
+    <div id="pilotures">
+      <img id="pilotSprite" src="../assets/pilots/M.png" style="width: 200px; height: 200px; padding-top: 15px" />;
+    </div>
+    <div id="pettures">
+      <button id="genderbuttons" ion-button (click)="nextPage(pilotName);">Next</button>
+      <p id="nextError"></p>
+    </div>
+  </div>
+</ion-content>

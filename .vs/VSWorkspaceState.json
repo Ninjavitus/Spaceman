@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\app",
+    "\\src\\pages",
+    "\\src\\pages\\hangar",
+    "\\src\\pages\\home",
+    "\\src\\pages\\newgame",
+    "\\src\\pages\\newgamepet",
+    "\\src\\pages\\viewpetone"
+  ],
+  "SelectedNode": "\\src\\pages\\viewpetone\\viewpetone.html",
+  "PreviewInSolutionExplorer": false
+}

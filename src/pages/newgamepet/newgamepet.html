@@ -1,0 +1,23 @@
+﻿<ion-header>
+</ion-header>
+
+
+<ion-content class="maincontent">
+  <div id="pilotSelectbg" style="text-align:center;">
+    <h1 id="whitetext"><font face="BebasNeue">Choose a gender</font></h1>
+    <button id="genderbuttons" ion-button (click)="randomPetOne(petName);">Get Pet</button><br />
+    <div class="nameForms">
+      <ion-item>
+        <ion-label stacked>Pet's name</ion-label>
+        <ion-input id="pilotName" type="text" maxlength="10" value="Pet" [(ngModel)]="petName"></ion-input><br />
+      </ion-item>
+    </div>
+    <div id="petpictures">
+      <img id="pilotSprite" src="../assets/pokeball.png" style="width: 200px; height: 200px; padding-top: 15px"/><br>
+    </div>
+    <div id="pettures">
+      <button id="genderbuttons" ion-button (click)="petNextOne(petName);">Create</button>
+      <p id="petError"></p>
+    </div>
+  </div>
+</ion-content>
