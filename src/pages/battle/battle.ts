@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { HangarPage } from '../hangar/hangar';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
