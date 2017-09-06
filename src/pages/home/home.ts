@@ -28,7 +28,7 @@ export class HomePage {
   PetThreeChips
   */
       // Initiate profile
-      var profileInit = { Time: this.updateTime(), curEnergy: "2", maxEnergy: "8", HasPilot: "No", Achievements:"None", Petventory: "None", Pet1: "No", Pet2: "No", Pet3: "No", PilotPrestige: "", Retired: "0", DeadPilots:"0", DeadPets: "0", }
+      var profileInit = { Time: this.updateTime(), curEnergy: "2", maxEnergy: "8", HasPilot: "No", Achievements:"None", Petventory: "None", Pet1: "No", Pet2: "No", Pet3: "No", PilotPrestige: "", Retired: "0", DeadPilots:"0", DeadPets: "0" }
 
       // Initiate pilot info
       var pilotInit = { Name: "", Race: "Human", Prof: "Default", curEXP: "12", maxEXP: "25", curVIT: "10", maxVIT: "10", ATK: "10", DEX: "8", DEF: "6", FTH: "6", Pet1: "No", Pet2: "No", Pet3: "No" }

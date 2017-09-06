@@ -8,6 +8,20 @@
 </ion-header>
 <ion-content id="battlemain">
 <div id="battlediv">
+<ion-input *ngIf="buttonClicked" type="text" value=""></ion-input>
+<ion-input *ngIf="buttonClicked2" type="text" value=""></ion-input>
+<ion-input *ngIf="buttonClicked3" type="text" value=""></ion-input>
+<div *ngIf="turnBG1" id="turnBGG1"></div>
+<div *ngIf="turnBG2" id="turnBGG2"></div>
+<div *ngIf="turnBG3" id="turnBGG3"></div>
+<div *ngIf="buttonClicked"><button ion-button id="defButton1" (click)="onButtonClick(1);">DEF</button></div>
+<div *ngIf="buttonClicked2"><button ion-button id="defButton2" (click)="onButtonClick(2);">DEF</button></div>
+<div *ngIf="buttonClicked3"><button ion-button id="defButton3" (click)="onButtonClick(3);">DEF</button></div>
+<div *ngIf="showEnemy1"><button ion-button id="atkButton1" (click)="chooseTarget(1);">ATK</button></div>
+<div *ngIf="showEnemy2"><button ion-button id="atkButton2" (click)="chooseTarget(2);">ATK</button></div>
+<div *ngIf="showEnemy3"><button ion-button id="atkButton3" (click)="chooseTarget(3);">ATK</button></div>
+<div *ngIf="startCombat"><button ion-button id="startBattle" color="danger" (click)="startFight();">FIGHT</button></div>
+<div *ngIf="resetOrder"><button ion-button id="resetFight" (click)="resetTargets();">RESET</button></div>
 <div id="pokeView1"></div>
 <div id="pokeView2"></div>
 <div id="pokeView3"></div>

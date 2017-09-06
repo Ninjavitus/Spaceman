@@ -213,34 +213,18 @@ export class HangarPage {
   startGame() {
   /*
   Profile - Store all permanent information : NewToGame, HasPilot, Pilot Inventory, Achievements, Amount of pilots retired, amountof pets lost, etc.
-  PilotInfo - Store all pilot stats. Name, Race, Prof, VIT, ATK, DEX, DEF, FTH, curEXP, maxEXP, Time, Newtogame, Energy, hasPet1,2,3
-  PetOneInfo
-  PetTwoInfo
-  PetThreeInfo
-  Possibly :
-  PetOneChips - Might store the abilities/spells/powers of Pets
-  PetTwoChips
-  PetThreeChips
   */
       // Initiate profile
-      var profileInit = { Time: this.updateTime(), curEnergy: "2", maxEnergy: "8", HasPilot: "No", Achievements:"None", Petventory: "None", Pet1: "No", Pet2: "No", Pet3: "No", PilotPrestige: "", Retired: "0", DeadPilots:"0", DeadPets: "0", }
-
-      // Initiate pilot info
-      var pilotInit = { Name: "", Race: "Human", Prof: "Default", curEXP: "12", maxEXP: "25", curVIT: "10", maxVIT: "10", ATK: "10", DEX: "8", DEF: "6", FTH: "6", Pet1: "No", Pet2: "No", Pet3: "No" }
-
+      var profileInit = { Time: this.updateTime(), curEnergy: "2", maxEnergy: "8", HasPilot: "No", Achievements:"None", Petventory: "None", Pet1: "Yes", Pet2: "Yes", Pet3: "Yes", PilotPrestige: "", Retired: "0", DeadPilots:"0", DeadPets: "0" };
 
       var profileInfo = JSON.stringify(profileInit);
-      var pilotInfo = JSON.stringify(pilotInit);
 
-      this.storage.set('Profile', profileInfo); // Sets basic game info for tracking. Not Player stats.
-      this.storage.set('PilotInfo', pilotInfo); // Resets player stats to null.
-      this.storage.set('FirstGame', 'First');
-      this.navCtrl.push(HomePage); // Switches the page to start the game.
+      this.storage.set('ProfileNew', profileInfo); // Sets basic game info for tracking. Not Player stats.
   }
 
 ionViewWillLeave() {
 // Update energy on page leave
-  this.storage.get('Profile').then((data) => {
+  this.storage.get('ProfileNew').then((data) => {
 
      var profileInfo = JSON.parse(data);
      this.updateEnergy(profileInfo);
