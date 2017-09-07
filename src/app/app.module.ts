@@ -12,6 +12,7 @@ import { NewgamepetPage } from '../pages/newgamepet/newgamepet';
 import { HangarPage } from '../pages/hangar/hangar';
 import { ViewpetonePage } from '../pages/viewpetone/viewpetone';
 import { BattlePage } from '../pages/battle/battle';
+import { ExplorePage } from '../pages/explore/explore';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { BattlePage } from '../pages/battle/battle';
     NewgamepetPage,
     HangarPage,
     ViewpetonePage,
-    BattlePage
+    BattlePage,
+    ExplorePage
   ],
   imports: [
     BrowserModule,
@@ -37,7 +39,8 @@ import { BattlePage } from '../pages/battle/battle';
     NewgamepetPage,
     HangarPage,
     ViewpetonePage,
-    BattlePage
+    BattlePage,
+    ExplorePage
   ],
   providers: [
     StatusBar,

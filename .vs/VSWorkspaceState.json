@@ -2,9 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\src",
+    "\\src\\app",
     "\\src\\pages",
-    "\\src\\pages\\battle"
+    "\\src\\pages\\battle",
+    "\\src\\pages\\explore"
   ],
-  "SelectedNode": "\\src\\pages\\battle\\battle.ts",
+  "SelectedNode": "\\src\\pages\\battle\\battle.scss",
   "PreviewInSolutionExplorer": false
 }

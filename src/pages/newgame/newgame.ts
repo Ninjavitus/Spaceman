@@ -96,7 +96,7 @@ export class NewgamePage {
                 if (genderPilot == "M" || genderPilot == "F") {
 
                     // Object containing all the player stats. Turned to string to save the values, then turned back to object
-                    var pilotInit = { Time: this.updateTime(), Name: "", Race: "", Prof: "", curEnergy: "2", maxEnergy: "8", curEXP: "12", maxEXP: "25", curVIT: "10", maxVIT: "10", ATK: "10", DEX: "8", DEF: "6", FTH: "6", Pet1: "No", Pet2: "No", Pet3: "No" }
+                    var pilotInit = { Time: this.updateTime(), Name: pilot, Race: "", Prof: "", curEnergy: "2", maxEnergy: "8", curEXP: "12", maxEXP: "25", curVIT: "10", maxVIT: "10", ATK: "10", DEX: "8", DEF: "6", FTH: "6", Pet1: "No", Pet2: "No", Pet3: "No" }
 
                     // Give a new player their stats. Will be accessed later for it's values.
                     this.storage.set('PilotInfo', JSON.stringify(pilotInit));

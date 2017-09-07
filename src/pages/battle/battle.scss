@@ -1,3 +1,62 @@
-page-battle {
+﻿#petHP1 {
+position: absolute;
+color: #FFFFFF;
+text-align:center;
+top: 56%;
+left: 4.5%;
+z-index: 8;
+}
 
+#petHP1 h1, #petHP2 h1, #petHP3 h1, #eneHP1 h1, #eneHP2 h1, #eneHP3 h1{
+width: 75px;
+heigth: 18px;
+border-radius: 3px;
+background-color: rgba(0, 0, 0, 0.75);
+box-shadow: 2px 2px 4px #000000;
+font-size: 15px;
+}
+
+#petHP2 {
+position: absolute;
+color: #FFFFFF;
+text-align:center;
+top: 71%;
+left: 4.5%;
+z-index: 8;
+}
+
+#petHP3 {
+position: absolute;
+color: #FFFFFF;
+text-align:center;
+top: 86%;
+left: 4.5%;
+z-index: 8;
+}
+
+#eneHP1 {
+position: absolute;
+color: #FFFFFF;
+text-align:center;
+top: 56%;
+right: 4.5%;
+z-index: 8;
+}
+
+#eneHP2 {
+position: absolute;
+color: #FFFFFF;
+text-align:center;
+top: 71%;
+right: 4.5%;
+z-index: 8;
+}
+
+#eneHP3 {
+position: absolute;
+color: #FFFFFF;
+text-align:center;
+top: 86%;
+right: 4.5%;
+z-index: 8;
 }

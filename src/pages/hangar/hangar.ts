@@ -1,8 +1,9 @@
 ﻿import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { ViewpetonePage } from '../viewpetone/viewpetone';
+import { ExplorePage } from '../explore/explore';
 import { HomePage } from '../home/home';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, ModalController, NavController, NavParams } from 'ionic-angular';
 import { BattlePage } from '../battle/battle';
 
 /**
@@ -19,7 +20,7 @@ import { BattlePage } from '../battle/battle';
 })
 export class HangarPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController) {
   }
 
   ionViewDidLoad() {
@@ -119,6 +120,11 @@ export class HangarPage {
       console.log("Energy updated. New hour.");
       } 
    }
+
+  exploreModal() {
+   let exploreCity = this.modalCtrl.create(ExplorePage);
+   exploreCity.present();
+  }
 
   addPet(){
   this.storage.get('PilotInfo').then((data) => {

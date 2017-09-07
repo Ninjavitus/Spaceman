@@ -1,0 +1,74 @@
+﻿<!--
+  Generated template for the ExplorePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+</ion-header>
+
+
+<ion-content id="planetmain">
+<div *ngIf="MissionInfoDiv" id="missionInfo"><div id="MissionInfoDivMini"></div><button ion-button id="startFightButton" (click)="explorePlanet();" color="secondary">FIGHT</button>         <button ion-button id="cancelButton" (click)="cancelButton();" color="danger">CANCEL</button></div>
+<ion-slides id="planetSlide">
+  <ion-slide>
+  <div id="PlanetBG">
+    <img id="planet1" src="../assets/planets/1.png" (click)="setPlanet('shroom');" style="width: 220px; height: 220px;" />
+  </div>
+  </ion-slide>
+  <ion-slide>
+  <div id="PlanetBG">
+    <img id="planet2" src="../assets/planets/3.png" (click)="setPlanet('stone');" style="width: 220px; height: 220px;" />
+  </div>
+  </ion-slide>
+  <ion-slide>
+  <div id="PlanetBG">
+    <img id="planet3" src="../assets/planets/8.png" (click)="setPlanet('blood');" style="width: 220px; height: 220px;" />
+  </div>
+  </ion-slide>
+</ion-slides>
+<button ion-button id="underPlanets" (click)="toHangar();">BACK TO HANGAR</button>
+<div id="MissionBG">
+<ion-scroll scrollY="true" id="missionScroll" style="width: 100%; height: 100%">
+  <ul *ngIf="MissionSelect1" id="MissionList">
+  <li><div id="M1" (click)="chooseMission('0');">Wild Encounter ★</div></li>
+  <li><div id="M1" (click)="chooseMission('1');">Mission I</div></li>
+  <li><div id="M1" (click)="chooseMission('2');">Mission II</div></li>
+  <li><div id="M1" (click)="chooseMission('3');">Mission III</div></li>
+  <li><div id="M1" (click)="chooseMission('4');">Mission IV</div></li>
+  <li><div id="M1" (click)="chooseMission('5');">Mission V</div></li>
+  <li><div id="M1" (click)="chooseMission('6');">Mission VI</div></li>
+  <li><div id="M1" (click)="chooseMission('7');">Mission VII</div></li>
+  <li><div id="M1" (click)="chooseMission('8');">Mission VIII</div></li>
+  <li><div id="M1" (click)="chooseMission('9');">Mission IX</div></li>
+  <li><div id="M1" (click)="chooseMission('10');">Mission X</div></li>
+</ul>
+  <ul *ngIf="MissionSelect2" id="MissionList">
+  <li><div id="M2" (click)="chooseMission('0');">Wild Encounter ★</div></li>
+  <li><div id="M2" (click)="chooseMission('1');">Mission I</div></li>
+  <li><div id="M2" (click)="chooseMission('2');">Mission II</div></li>
+  <li><div id="M2" (click)="chooseMission('3');">Mission III</div></li>
+  <li><div id="M2" (click)="chooseMission('4');">Mission IV</div></li>
+  <li><div id="M2" (click)="chooseMission('5');">Mission V</div></li>
+  <li><div id="M2" (click)="chooseMission('6');">Mission VI</div></li>
+  <li><div id="M2" (click)="chooseMission('7');">Mission VII</div></li>
+  <li><div id="M2" (click)="chooseMission('8');">Mission VIII</div></li>
+  <li><div id="M2" (click)="chooseMission('9');">Mission IX</div></li>
+  <li><div id="M2" (click)="chooseMission('10');">Mission X</div></li>
+</ul>  
+  <ul *ngIf="MissionSelect3" id="MissionList">
+  <li><div id="M3" (click)="chooseMission('0');">Wild Encounter ★</div></li>
+  <li><div id="M3" (click)="chooseMission('1');">Mission I</div></li>
+  <li><div id="M3" (click)="chooseMission('2');">Mission II</div></li>
+  <li><div id="M3" (click)="chooseMission('3');">Mission III</div></li>
+  <li><div id="M3" (click)="chooseMission('4');">Mission IV</div></li>
+  <li><div id="M3" (click)="chooseMission('5');">Mission V</div></li>
+  <li><div id="M3" (click)="chooseMission('6');">Mission VI</div></li>
+  <li><div id="M3" (click)="chooseMission('7');">Mission VII</div></li>
+  <li><div id="M3" (click)="chooseMission('8');">Mission VIII</div></li>
+  <li><div id="M3" (click)="chooseMission('9');">Mission IX</div></li>
+  <li><div id="M3" (click)="chooseMission('10');">Mission X</div></li>
+</ul>  
+</ion-scroll>
+</div>
+</ion-content>

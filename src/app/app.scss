@@ -24,6 +24,72 @@
   color: #FFFFFF;
 }
 
+#missionScroll { 
+white-space: nowrap; 
+}
+
+#MissionList {
+  color: #FFFFFF;
+  font-size:20px;
+  margin-left: -15px;
+  list-style-type: none;
+}
+
+#MissionList li {
+  padding: 5px;
+}
+
+
+#M1{
+  width:90%;
+  text-align: center;
+  background-color: rgba(0, 187, 51, 0.45);
+}
+
+#M2{
+  width:90%;
+  text-align: center;
+  background-color: rgba(45, 100, 245, 0.45);
+}
+
+#M3{
+  width:90%;
+  text-align: center;
+  background-color: rgba(255, 0, 0, 0.45);
+}
+
+#missionInfo {
+  position:absolute;
+  width:70%;
+  height: 40%;
+  top: 5%;
+  left: 15%;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 5;
+}
+
+#MissionInfoDivMini {
+  width:90%;
+  height: 68%;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.65);
+  z-index: 6;
+}
+
+#underPlanets {
+  position:absolute;
+  box-shadow: 2px 2px 4px #000000;
+  z-index: 10;
+  top:46.5%;
+  left:25%;
+}
+
+#startFightButton, #cancelButton {
+  margin-left: 15px;
+  box-shadow: 1px 1px 3px #000000;
+  z-index: 7;
+}
+
 .maincontent {
   background-image: url('/assets/bg.gif');
   background-repeat: no-repeat;
@@ -75,6 +141,36 @@
   height:25px;
   top: 83.5%;
   left: 30%;
+}
+
+#PlanetBG {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.65);
+  box-shadow: 1px 2px 4px #000000;
+  width:90%;
+  left: 5%;
+}
+
+#planetSlide {
+  position: absolute;
+  top: -45%;
+}
+
+#MissionBG {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.65);
+  box-shadow: 1px 2px 4px #000000;
+  width: 90%;
+  height: 40%;
+  top: 57%;
+  left: 5%;
+  z-index: 3;
+}
+
+#planetmain {
+  background-image: url('/assets/planets/bg.png');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 #startBattle {
