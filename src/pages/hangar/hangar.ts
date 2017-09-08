@@ -5,7 +5,6 @@ import { ExplorePage } from '../explore/explore';
 import { HomePage } from '../home/home';
 import { IonicPage, ModalController, NavController, NavParams } from 'ionic-angular';
 import { BattlePage } from '../battle/battle';
-import { StatusBar } from '@ionic-native/status-bar';
 
 /**
  * Generated class for the HangarPage page.
