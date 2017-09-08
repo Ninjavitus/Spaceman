@@ -9,6 +9,7 @@
 
 
 <ion-content id="planetmain">
+<div ion-fixed style="width:100%; height:100%">
 <div *ngIf="MissionInfoDiv" id="missionInfo"><div id="MissionInfoDivMini"></div><button ion-button id="startFightButton" (click)="explorePlanet();" color="secondary">FIGHT</button>         <button ion-button id="cancelButton" (click)="cancelButton();" color="danger">CANCEL</button></div>
 <ion-slides id="planetSlide">
   <ion-slide>
@@ -70,5 +71,6 @@
   <li><div id="M3" (click)="chooseMission('10');">Mission X</div></li>
 </ul>  
 </ion-scroll>
+</div>
 </div>
 </ion-content>

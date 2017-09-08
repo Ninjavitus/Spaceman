@@ -21,11 +21,8 @@ import { StatusBar } from '@ionic-native/status-bar';
 })
 export class HangarPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController, private statusBar: StatusBar) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController) {
   }
-
-  // let status bar overlay webview
-  this.statusBar.hide();
 
   ionViewDidLoad() {
       setTimeout(() => {
