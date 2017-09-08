@@ -77,6 +77,10 @@ export class HangarPage {
     return currentDay;
    }
 
+   setMyStyles() {
+   //document.getElementById('testdiv').style.height = "10%";
+  }
+
    // Global energy for now
    updateEnergy(gameInfo){
       // Create an array with the last saved player date

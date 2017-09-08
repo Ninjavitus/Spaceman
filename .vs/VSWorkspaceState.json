@@ -5,8 +5,9 @@
     "\\src\\app",
     "\\src\\pages",
     "\\src\\pages\\battle",
-    "\\src\\pages\\explore"
+    "\\src\\pages\\explore",
+    "\\src\\pages\\hangar"
   ],
-  "SelectedNode": "\\src\\pages\\battle\\battle.scss",
+  "SelectedNode": "\\src\\pages\\explore\\explore.ts",
   "PreviewInSolutionExplorer": false
 }

@@ -60,3 +60,64 @@ top: 86%;
 right: 4.5%;
 z-index: 8;
 }
+
+#battlefield {
+position: absolute;
+width: 100%;
+height: 48%;
+z-index: 0;
+}
+
+#evilField1 {
+position: absolute;
+top: 44%;
+right: 21%;
+-moz-transform: scaleX(-1);
+-o-transform: scaleX(-1);
+-webkit-transform: scaleX(-1);
+transform: scaleX(-1);
+z-index: 2;
+}
+
+#evilField2 {
+position: absolute;
+top: 64%;
+right: 7%;
+-moz-transform: scaleX(-1);
+-o-transform: scaleX(-1);
+-webkit-transform: scaleX(-1);
+transform: scaleX(-1);
+z-index: 3;
+}
+
+#evilField3 {
+position: absolute;
+top: 20%;
+right: 9%;
+-moz-transform: scaleX(-1);
+-o-transform: scaleX(-1);
+-webkit-transform: scaleX(-1);
+transform: scaleX(-1);
+z-index: 4;
+}
+
+#pokeField1 {
+position: absolute;
+top: 44%;
+left: 21%;
+z-index: 2;
+}
+
+#pokeField2 {
+position: absolute;
+top: 64%;
+left: 7%;
+z-index: 3;
+}
+
+#pokeField3 {
+position: absolute;
+top: 20%;
+left: 10%;
+z-index: 4;
+}

@@ -30,7 +30,7 @@ export class ExplorePage {
   
   // When they choose which planet to visit
   setPlanet(planet){
-  if(planet == 'shroom'){
+  if(planet == 'grass'){
   this.MissionSelect1 = true;
   this.MissionSelect2 = false;
   this.MissionSelect3 = false;

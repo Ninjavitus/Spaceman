@@ -92,9 +92,102 @@ export class BattlePage {
   var planet = this.navParams.get('planet');
   var level = this.navParams.get('level');
 
+  var planetImage = document.getElementById("battlefield") as HTMLImageElement;
+  planetImage.style.background = 'url("/assets/planets/' + planet + '.png")' + 'no-repeat';
+  planetImage.style.backgroundSize = 'cover';
+  //planetImage.setAttribute("style","position:absolute; top: 33%; width:100%");
+
    this.partySprites();
    this.planetEnemies(planet, level);
-   }, 400);  
+   }, 200);  
+  }
+
+  // Animate test
+  animateTest(num, who){
+
+  var pokeFieldNum = "Field" + num; // Animate all pokemon
+  var pokeMove;
+
+  var pos = 0;
+  var moveBack = 0;
+  var moveFront = 1;
+  var moveToDefault = 1;
+  if(who == 'E'){
+  pokeMove = document.getElementById("evil" + pokeFieldNum) as HTMLImageElement;
+  var moveTimer = setInterval(animateThisEnemy, 6); //5 For Auto x2 version, 7 for regular.
+  } else if(who == 'P'){
+  pokeMove = document.getElementById("poke" + pokeFieldNum) as HTMLImageElement;
+  var moveTimer = setInterval(animateThisAlly, 6); //5 For Auto x2 version, 7 for regular. 
+  }
+
+  var initialPosition;
+  
+  if(num == 1){
+  initialPosition = 21;
+  }else if(num == 2){
+  initialPosition = 7;
+  }else if(num == 3){
+  initialPosition = 10;
+  }
+
+  function animateThisAlly(){
+  
+    var currentPosition = initialPosition - moveBack; // Get the current position
+    var newPositionFront = currentPosition + moveFront;
+    var newPositionFinal = newPositionFront - moveToDefault;
+
+    if (pos == 40) {
+      clearInterval(moveTimer);
+      console.log("Finished");
+    } else if(pos <= 6) {
+      pokeMove.style.left = currentPosition + '%'; //Move him back 4%. Current Pos at 6%
+      moveBack++;
+      pos++; 
+    } else if(pos > 6 && pos < 28){
+      pokeMove.style.left = newPositionFront + '%'; //Move him forward 8%
+      moveFront++;
+      pos++; 
+    } else if(pos >= 28){ // If he's not back where he started,
+      pokeMove.style.left = newPositionFinal + '%'; //Move him back
+      moveToDefault++;
+        if(newPositionFinal == initialPosition){
+        // If he's back to where he started
+        pos = 40;
+        }
+    }
+    }
+
+  function animateThisEnemy(){
+  
+    var currentPosition = initialPosition - moveBack; // Get the current position
+    var newPositionFront = currentPosition + moveFront;
+    var newPositionFinal = newPositionFront - moveToDefault;
+
+    if (pos == 40) {
+      clearInterval(moveTimer);
+      console.log("Finished");
+    } else if(pos <= 6) {
+      pokeMove.style.right = currentPosition + '%'; //Move him back 4%. Current Pos at 6%
+      moveBack++;
+      pos++; 
+    } else if(pos > 6 && pos < 28){
+      pokeMove.style.right = newPositionFront + '%'; //Move him forward 8%
+      moveFront++;
+      pos++; 
+    } else if(pos >= 28){ // If he's not back where he started,
+      pokeMove.style.right = newPositionFinal + '%'; //Move him back
+      moveToDefault++;
+        if(newPositionFinal == initialPosition){
+        // If he's back to where he started
+        pos = 40;
+        }
+    }
+    }
+    if(who == "E"){ //Animate if enemy, else animate ally
+    animateThisEnemy();
+    } else if(who == "P"){
+    animateThisAlly();
+    }
   }
 
   // Sets the sprites of your pet party
@@ -139,7 +232,7 @@ export class BattlePage {
 
   planetEnemies(planet, level){
   // Check what planet it is
-  if(planet == "shroom") {
+  if(planet == "grass") {
    // Predetermined monsters for every level. Can find RNG and goodies (loot) when venturing into the Wilderness
    // AB = Ability 1,2,3. L1,2,3,4,5 = Loot 1 to 5. 1 common, 5 super rare. 
    // Determine base stats for all enemies found on this planet, then generate new instances of the enemies (with their stats scaling with lvl)

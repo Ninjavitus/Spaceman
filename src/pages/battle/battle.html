@@ -6,7 +6,15 @@
 -->
 <ion-header>
 </ion-header>
-<ion-content id="battlemain">
+<ion-content id="battlemain" [style.background-size]="'contain'">
+<div id="battlefield">
+<img id="evilField1" src="../assets/hangar/4.png" style="width: 70px; height: 70px;" (click)="animateTest(1, 'E');" />
+<img id="evilField2" src="../assets/hangar/6.png" style="width: 70px; height: 70px;" (click)="animateTest(2, 'E');" />
+<img id="evilField3" src="../assets/hangar/3.png" style="width: 70px; height: 70px;" (click)="animateTest(3, 'E');" />
+<img id="pokeField1" src="../assets/hangar/5.png" style="width: 70px; height: 70px;" (click)="animateTest(1, 'P');" />
+<img id="pokeField2" src="../assets/hangar/1.png" style="width: 70px; height: 70px;" (click)="animateTest(2, 'P');" />
+<img id="pokeField3" src="../assets/hangar/3.png" style="width: 70px; height: 70px;" (click)="animateTest(3, 'P');" />
+</div>
 <div id="battlediv">
 <ion-input *ngIf="buttonClicked" type="text" value=""></ion-input>
 <ion-input *ngIf="buttonClicked2" type="text" value=""></ion-input>
