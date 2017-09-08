@@ -5,6 +5,7 @@ import { ExplorePage } from '../explore/explore';
 import { HomePage } from '../home/home';
 import { IonicPage, ModalController, NavController, NavParams } from 'ionic-angular';
 import { BattlePage } from '../battle/battle';
+import { StatusBar } from '@ionic-native/status-bar';
 
 /**
  * Generated class for the HangarPage page.
@@ -20,8 +21,11 @@ import { BattlePage } from '../battle/battle';
 })
 export class HangarPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController, private statusBar: StatusBar) {
   }
+
+  // let status bar overlay webview
+  this.statusBar.overlaysWebView(false);
 
   ionViewDidLoad() {
       setTimeout(() => {

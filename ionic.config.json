@@ -2,5 +2,7 @@
   "name": "spaceman",
   "app_id": "bcd61f83",
   "type": "ionic-angular",
-  "integrations": {}
+  "integrations": {
+    "cordova": {}
+  }
 }
