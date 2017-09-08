@@ -25,7 +25,7 @@ export class HangarPage {
   }
 
   // let status bar overlay webview
-  this.statusBar.overlaysWebView(false);
+  this.statusBar.hide();
 
   ionViewDidLoad() {
       setTimeout(() => {
