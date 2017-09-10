@@ -39,8 +39,15 @@ export class BattlePage {
   public eneAlive2: any = "No";
   public eneAlive3: any = "No";
 
+  public expPet1: boolean = false; // Shows ally pets on the victory screen
+  public expPet2: boolean = false;
+  public expPet3: boolean = false;
+
   public enemyDeadCount: number = 0;
   public petDeadCount: number = 0;
+
+  public victoryScreen: boolean = false; //Victory screen for experience
+  public defeatScreen: boolean = false; //defeat screen for experience
 
   public buttonClicked: boolean = false; //ASSIST button 1
   public buttonClicked2: boolean = false; //ASSIST button 2
@@ -49,6 +56,10 @@ export class BattlePage {
   public showEnemy1: boolean = false; //ATTACK target 1
   public showEnemy2: boolean = false; //ATTACK target 2
   public showEnemy3: boolean = false; //ATTACK target 3
+
+  public evilFieldB1: boolean = false; //CLICK enemies on field to attack
+  public evilFieldB2: boolean = false; //
+  public evilFieldB3: boolean = false; //
 
   public resetOrder: boolean = false; //Resets all the previously chosen targets
   public startCombat: boolean = false; //Start combat button
@@ -111,6 +122,9 @@ public onButtonClick(target) {
    this.showEnemy1 = false; 
    this.showEnemy2 = false;
    this.showEnemy3 = false;
+   this.evilFieldB1 = false;
+   this.evilFieldB2 = false;
+   this.evilFieldB3 = false;
    // Make FIGHT and RESET buttons appear
    this.resetOrder = true;
    this.startCombat = true;
@@ -125,7 +139,7 @@ public onButtonClick(target) {
   var planet = this.navParams.get('planet');
   var level = this.navParams.get('level');
 
-  var planetImage = document.getElementById("battlefield") as HTMLImageElement;
+  var planetImage = document.getElementById("battlefield");
   planetImage.style.background = 'url("/assets/planets/' + planet + '.png")' + 'no-repeat';
   planetImage.style.backgroundSize = 'cover';
   //planetImage.setAttribute("style","position:absolute; top: 33%; width:100%");
@@ -190,27 +204,27 @@ public onButtonClick(target) {
   }
 
   if(who == 'evil'){
-  pokeMove = document.getElementById('evil' + fieldNum) as HTMLImageElement;
+  pokeMove = document.getElementById('evil' + fieldNum);
    if(moveType == 'ATK'){ // If ATK, then target is a friendly pet
-  targetMove = document.getElementById('poke' + fieldTarget) as HTMLImageElement; 
-  txtMove = document.getElementById('dmgPet' + target) as HTMLImageElement; 
+  targetMove = document.getElementById('poke' + fieldTarget); 
+  txtMove = document.getElementById('dmgPet' + target); 
   txtMove.style.top = initialText + '%';
   txtMove.innerText = damage;
   txtMove.style.opacity = 1;
    }else if(moveType == 'DEF'){ // If DEF then target is an ally.
-  targetMove = document.getElementById('evil' + fieldTarget) as HTMLImageElement;    
+  targetMove = document.getElementById('evil' + fieldTarget);    
    }
   var moveTimer = setInterval(animateThisEnemy, 6); //5 For Auto x2 version, 7 for regular.
   } else if(who == 'poke'){
-  pokeMove = document.getElementById("poke" + fieldNum) as HTMLImageElement;
+  pokeMove = document.getElementById("poke" + fieldNum);
    if(moveType == 'ATK'){ // If ATK, then target is an enemy
-  targetMove = document.getElementById('evil' + fieldTarget) as HTMLImageElement; 
-  txtMove = document.getElementById('dmgEvil' + target) as HTMLImageElement;
+  targetMove = document.getElementById('evil' + fieldTarget); 
+  txtMove = document.getElementById('dmgEvil' + target);
   txtMove.style.top = initialText + '%';
   txtMove.innerText = damage;
   txtMove.style.opacity = 1;
    }else if(moveType == 'DEF'){ // If DEF then target is an ally.
-  targetMove = document.getElementById('poke' + fieldTarget) as HTMLImageElement;    
+  targetMove = document.getElementById('poke' + fieldTarget);    
    }
   var moveTimer = setInterval(animateThisAlly, 6); //5 For Auto x2 version, 7 for regular. 
   }
@@ -320,6 +334,22 @@ public onButtonClick(target) {
    }, 100);
   }
 
+  nextMission(){
+  var planets = this.navParams.get('planet');
+  var levels = parseInt(this.navParams.get('level')) + 1;
+  this.navCtrl.push(BattlePage, {planet: planets, level: levels});  
+  }
+
+  repeatMission(){
+  var planets = this.navParams.get('planet');
+  var levels = this.navParams.get('level');
+  this.navCtrl.push(BattlePage, {planet: planets, level: levels});
+  }
+
+  backToHangar(){
+  this.navCtrl.push(HangarPage);
+  }
+
   // Sets the sprites of your pet party
   partySprites() {
     // Check how many pets the player has and place them on the screen
@@ -330,7 +360,7 @@ public onButtonClick(target) {
   if(profileInfo["Pet1"] == "Yes"){
   this.storage.get('PetOneInfo').then((data1) => {
   var petInfo1 = JSON.parse(data1);
-  this.petStats1 = petInfo1; // Set Pet stats as public variable
+  this.petStats1 = JSON.parse(data1); // Set Pet stats as public variable
   this.petAlive1 = "Yes";
   this.turnBG1 = true;
   this.petAmount = 1;
@@ -342,7 +372,7 @@ public onButtonClick(target) {
   if(profileInfo["Pet2"] == "Yes"){
   this.storage.get('PetTwoInfo').then((data2) => {
   var petInfo2 = JSON.parse(data2);
-  this.petStats2 = petInfo2; 
+  this.petStats2 = JSON.parse(data2);
   this.petAlive2 = "Yes";
   this.petAmount = 2;
   this.buttonClicked2 = true; // If they have a 2nd or 3rd Pet, add the ASSIST buttons.
@@ -354,7 +384,7 @@ public onButtonClick(target) {
   if(profileInfo["Pet3"] == "Yes"){
   this.storage.get('PetThreeInfo').then((data3) => {
   var petInfo3 = JSON.parse(data3);
-  this.petStats3 = petInfo3; 
+  this.petStats3 = JSON.parse(data3); 
   this.petAlive3 = "Yes";
   this.petAmount = 3;
   document.getElementById("pokeView3").innerHTML = '<img id="pokeBattle3" src="../assets/combat/' + petInfo3["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP3"><h1>'+ petInfo3["curVIT"] + ' / ' + petInfo3["maxVIT"] +'</h1></div>';
@@ -416,6 +446,7 @@ public onButtonClick(target) {
    if(levelInfo["amount"] == '1') {
    this.eneAlive1 = "Yes";
    this.showEnemy1 = true; // Shows attack button
+   this.evilFieldB1 = true;
    document.getElementById("evilView1").innerHTML = '<img id="evilBattle1" src="../assets/combat/' + levelInfo["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP1"><h1>'+ levelInfo["curVIT"] + ' / ' + levelInfo["maxVIT"] +'</h1></div>';
     // Battlefield pics underneath
    document.getElementById("bfEvil1").innerHTML = '<img id="evilField1" src="../assets/hangar/' + levelInfo["sprite"] + '.png" style="width: 70px; height: 70px;" />';
@@ -424,6 +455,8 @@ public onButtonClick(target) {
    this.eneAlive2 = "Yes";
    this.showEnemy1 = true;
    this.showEnemy2 = true;
+   this.evilFieldB1 = true;
+   this.evilFieldB2 = true;
   document.getElementById("evilView1").innerHTML = '<img id="evilBattle1" src="../assets/combat/' + enemyInfo1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP1"><h1>'+ enemyInfo1["curVIT"] + ' / ' + enemyInfo1["maxVIT"] +'</h1></div>';
   document.getElementById("evilView2").innerHTML = '<img id="evilBattle2" src="../assets/combat/' + enemyInfo2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP2"><h1>'+ enemyInfo2["curVIT"] + ' / ' + enemyInfo2["maxVIT"] +'</h1></div>';
 
@@ -436,6 +469,9 @@ public onButtonClick(target) {
    this.showEnemy1 = true; 
    this.showEnemy2 = true;
    this.showEnemy3 = true;
+   this.evilFieldB1 = true;
+   this.evilFieldB2 = true;
+   this.evilFieldB3 = true;
    // Pictures for the bottom of the screen, where Button selection/ Move selection phase 
   document.getElementById("evilView1").innerHTML = '<img id="evilBattle1" src="../assets/combat/' + enemyInfo1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP1"><h1>'+ enemyInfo1["curVIT"] + ' / ' + enemyInfo1["maxVIT"] +'</h1></div>';
   document.getElementById("evilView2").innerHTML = '<img id="evilBattle2" src="../assets/combat/' + enemyInfo2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP2"><h1>'+ enemyInfo2["curVIT"] + ' / ' + enemyInfo2["maxVIT"] +'</h1></div>';
@@ -503,11 +539,20 @@ public onButtonClick(target) {
 
   // Reset attack turns and make buttons come back
  resetTargets(){
-
+   // Reset combat lines
+   var lineIMG1 = document.getElementById('bLine1') as HTMLImageElement;;
+   var lineIMG2 = document.getElementById('bLine2') as HTMLImageElement;;
+   var lineIMG3 = document.getElementById('bLine3') as HTMLImageElement;;
+   lineIMG1.src = '../assets/combat/linenone.png';
+   lineIMG2.src = '../assets/combat/linenone.png';
+   lineIMG3.src = '../assets/combat/linenone.png';
   // Do something if all enemies are dead
   if(this.enemyAmount == this.enemyDeadCount){
-  console.log("You win!");
-   this.navCtrl.pop();
+  this.victoryScreen = true; // Make EXP screen appear
+  var blurField = document.getElementById('battlefield');
+  var blurMain = document.getElementById('battlediv');
+  blurField.style.filter = 'blur(3px)';
+  blurMain.style.filter = 'blur(3px)';
   } else if (this.petAmount == this.petDeadCount) { // Do something if all pets are dead
   console.log("You lose!");
    this.navCtrl.pop();
@@ -520,27 +565,26 @@ public onButtonClick(target) {
    this.buttonClicked = false; // ASSIST
    this.buttonClicked2 = false;
    this.buttonClicked3 = false;
-   // Reset combat lines
-   var lineIMG1 = document.getElementById('bLine1') as HTMLImageElement;
-   var lineIMG2 = document.getElementById('bLine2') as HTMLImageElement;
-   var lineIMG3 = document.getElementById('bLine3') as HTMLImageElement;
-   lineIMG1.src = '../assets/combat/linenone.png';
-   lineIMG2.src = '../assets/combat/linenone.png';
-   lineIMG3.src = '../assets/combat/linenone.png';
+   this.evilFieldB1 = false;
+   this.evilFieldB2 = false;
+   this.evilFieldB3 = false;
    // Make FIGHT and RESET buttons DISAPPEAR
    this.resetOrder =  false;
    this.startCombat = false;
   //Check which enemies are dead. Only give ATK buttons to the alive ones.
   if(this.eneAlive1 !== "No"){
   this.showEnemy1 = true;
+  this.evilFieldB1 = true;
   }
 
   if(this.eneAlive2 !== "No"){
   this.showEnemy2 = true;  
+  this.evilFieldB2 = true;
   }
 
   if(this.eneAlive3 !== "No"){
   this.showEnemy3 = true; 
+  this.evilFieldB3 = true;
   }
 
   if(this.petAlive1 !== "No"){ // If Pet1 is not dead (if he's alive)
@@ -617,23 +661,23 @@ public onButtonClick(target) {
          } else { // If none of them are weak to it, attack the one with the least health. If all at 100%, attack pet1
             if(pet1HP < pet2HP){
                 if(pet1HP < pet3HP){
-                   target = this.petStats1; // If pet1 HP is smaller than Pet2 and pet3 HP, pet1 is the target.
+                   target = 1; // If pet1 HP is smaller than Pet2 and pet3 HP, pet1 is the target.
                 }
             } else if(pet2HP < pet3HP){
-                  target = this.petStats2;
+                  target = 2;
             } else { //If pet2 has less HP than pet1 but more than pet3, pet 3 wins. otherwise pet2 wins.
-                target = this.petStats3;
+                target = 3;
             }
          }
     } else {
         if(pet1HP < pet2HP){
           if(pet1HP < pet3HP){
-            target = this.petStats1; // If pet1 HP is smaller than Pet2 and pet3 HP, pet1 is the target.
+            target = 1; // If pet1 HP is smaller than Pet2 and pet3 HP, pet1 is the target.
             }
        } else if(pet2HP < pet3HP){
-           target = this.petStats2;
+           target = 2;
         } else { //If pet2 has less HP than pet1 but more than pet3, pet 3 wins. otherwise pet2 wins.
-         target = this.petStats3;
+         target = 3;
        }
     }
  } else {
@@ -754,6 +798,7 @@ public onButtonClick(target) {
 
   // Enemy1's turn after Pet1 went.
  enemyPhase1(){
+       if(this.eneAlive1 !== "No"){ // Check if we have Pet1 is alive or not.
       // If more than 1 enemy, change the value of currentEnemy
       if(this.enemyAmount > 1){
       var currentEnemy = this.enemyStats["enemy1"]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
@@ -784,7 +829,6 @@ public onButtonClick(target) {
       weakColor = 'none';
       }
 
-      if(this.eneAlive1 !== "No"){ // Check if we have Pet1 is alive or not.
            //Pet stats
            var pDEX = parseInt(currentPet["DEX"]);
            var pDEF = parseInt(currentPet["DEF"]);
@@ -857,7 +901,7 @@ public onButtonClick(target) {
 
       setTimeout(() => {
       // Remove combat lines before moving to the next phase
-      var lineIMG = document.getElementById('bLine2') as HTMLImageElement;
+      var lineIMG = document.getElementById('bLine2') as HTMLImageElement;;
       lineIMG.src = '../assets/combat/linenone.png';
       }, 150);
 
@@ -959,31 +1003,38 @@ public onButtonClick(target) {
 
   // Enemy2's turn after Pet2 went.
   enemyPhase2(){
-      //AI will change the targetMove later on, and petStats1
-      var targetMove = 2;
-      var currentPet = this.petStats2;
+      if(this.eneAlive2 !== "No"){ // Check if we have Pet1 is alive or not.
 
       // If more than 1 enemy, change the value of currentEnemy
       if(this.enemyAmount > 1){
-      var currentEnemy = this.enemyStats["enemy1"]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
+      var currentEnemy = this.enemyStats["enemy2"]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
       } else {
       var currentEnemy = this.enemyStats;
       }
 
       var weakColor; // What color the target is weak to
 
+      //Set AI
+      var targetMove = this.enemyAI(currentEnemy);
+      if(targetMove == 1){
+      var currentPet = this.petStats1;      
+      } else if(targetMove == 2) {
+       var currentPet = this.petStats2;     
+      } else {
+       var currentPet = this.petStats3;     
+      }
+
       //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
-      if(currentPet["color"] == "red"){
+      if(currentEnemy["color"] == "red"){
       weakColor = 'blue';
-      } else if(currentPet["color"] == "green"){
+      } else if(currentEnemy["color"] == "green"){
       weakColor = 'red';
-      } else if(currentPet["color"] == "blue"){
+      } else if(currentEnemy["color"] == "blue"){
       weakColor = 'green';
       } else { // If purple or gold
       weakColor = 'none';
       }
 
-      if(this.eneAlive2 !== "No"){ // Check if we have Pet1 is alive or not.
            //Pet stats
            var pDEX = parseInt(currentPet["DEX"]);
            var pDEF = parseInt(currentPet["DEF"]);
@@ -1161,18 +1212,25 @@ public onButtonClick(target) {
 
   // Enemy3's turn after Pet3 went. Final turn of the fight before resetting the buttons.
   enemyPhase3(){
-      //AI will change the targetMove later on, and petStats1
-      var targetMove = 3;
-      var currentPet = this.petStats3;
+      if(this.eneAlive3 !== "No"){ // Check if we have Enemy3 is alive or not.
+      //Set AI
+      var targetMove = this.enemyAI(currentEnemy);
+      if(targetMove == 1){
+      var currentPet = this.petStats1;      
+      } else if(targetMove == 2) {
+       var currentPet = this.petStats2;     
+      } else {
+       var currentPet = this.petStats3;     
+      }
 
       var weakColor; // What color the target is weak to
 
       //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
-      if(currentPet["color"] == "red"){
+      if(currentEnemy["color"] == "red"){
       weakColor = 'blue';
-      } else if(currentPet["color"] == "green"){
+      } else if(currentEnemy["color"] == "green"){
       weakColor = 'red';
-      } else if(currentPet["color"] == "blue"){
+      } else if(currentEnemy["color"] == "blue"){
       weakColor = 'green';
       } else { // If purple or gold
       weakColor = 'none';
@@ -1180,12 +1238,11 @@ public onButtonClick(target) {
 
       // If more than 1 enemy, change the value of currentEnemy
       if(this.enemyAmount > 1){
-      var currentEnemy = this.enemyStats["enemy1"]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
+      var currentEnemy = this.enemyStats["enemy3"]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
       } else {
       var currentEnemy = this.enemyStats;
       }
 
-      if(this.eneAlive3 !== "No"){ // Check if we have Pet1 is alive or not.
            //Pet stats
            var pDEX = parseInt(currentPet["DEX"]);
            var pDEF = parseInt(currentPet["DEF"]);
