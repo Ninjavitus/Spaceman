@@ -23,6 +23,18 @@ export class HangarPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController) {
   }
 
+  // Checks if the player has opened the app and/or made an account before.
+  ionViewWillEnter() {
+
+      this.storage.get('FirstGame').then((newToGame) => {
+
+          // Check if null (first time ever playing)
+          if (newToGame == null){
+              this.navCtrl.push(HomePage);
+          }     
+      });
+  }
+
   ionViewDidLoad() {
       setTimeout(() => {
       // Check if player has a Pet1, 2 and 3

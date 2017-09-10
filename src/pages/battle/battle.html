@@ -9,14 +9,23 @@
 <ion-content id="battlemain" [style.background-size]="'contain'">
 <div ion-fixed style="width:100%; height:100%">
 <div id="battlefield">
-<img id="evilField1" src="../assets/hangar/4.png" style="width: 70px; height: 70px;" (click)="animateTest(1, 'E');" />
-<img id="evilField2" src="../assets/hangar/6.png" style="width: 70px; height: 70px;" (click)="animateTest(2, 'E');" />
-<img id="evilField3" src="../assets/hangar/3.png" style="width: 70px; height: 70px;" (click)="animateTest(3, 'E');" />
-<img id="pokeField1" src="../assets/hangar/5.png" style="width: 70px; height: 70px;" (click)="animateTest(1, 'P');" />
-<img id="pokeField2" src="../assets/hangar/1.png" style="width: 70px; height: 70px;" (click)="animateTest(2, 'P');" />
-<img id="pokeField3" src="../assets/hangar/3.png" style="width: 70px; height: 70px;" (click)="animateTest(3, 'P');" />
+<div id="bfPet1"></div>
+<div id="bfPet2"></div>
+<div id="bfPet3"></div>
+<div id="bfEvil1"></div>
+<div id="bfEvil2"></div>
+<div id="bfEvil3"></div>
+<h1 id="dmgPet1"></h1>
+<h1 id="dmgPet2"></h1>
+<h1 id="dmgPet3"></h1>
+<h1 id="dmgEvil1"></h1>
+<h1 id="dmgEvil2"></h1>
+<h1 id="dmgEvil3"></h1>
 </div>
 <div id="battlediv">
+<img id="bLine1" src="../assets/combat/linenone.png" style="width: 320px; height: 260px;" />
+<img id="bLine2" src="../assets/combat/linenone.png" style="width: 320px; height: 260px;" />
+<img id="bLine3" src="../assets/combat/linenone.png" style="width: 320px; height: 260px;" />
 <ion-input *ngIf="buttonClicked" type="text" value=""></ion-input>
 <ion-input *ngIf="buttonClicked2" type="text" value=""></ion-input>
 <ion-input *ngIf="buttonClicked3" type="text" value=""></ion-input>

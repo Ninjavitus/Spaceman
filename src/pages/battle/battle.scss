@@ -83,6 +83,7 @@ z-index: 2;
 position: absolute;
 top: 64%;
 right: 7%;
+filter: brightness(1);
 -moz-transform: scaleX(-1);
 -o-transform: scaleX(-1);
 -webkit-transform: scaleX(-1);
@@ -93,7 +94,7 @@ z-index: 3;
 #evilField3 {
 position: absolute;
 top: 20%;
-right: 9%;
+right: 10%;
 -moz-transform: scaleX(-1);
 -o-transform: scaleX(-1);
 -webkit-transform: scaleX(-1);
@@ -103,6 +104,7 @@ z-index: 4;
 
 #pokeField1 {
 position: absolute;
+filter: brightness(1);
 top: 44%;
 left: 21%;
 z-index: 2;
@@ -120,4 +122,60 @@ position: absolute;
 top: 20%;
 left: 10%;
 z-index: 4;
+}
+
+#dmgPet1, #dmgPet2, #dmgPet3, #dmgEvil1, #dmgEvil2, #dmgEvil3 {
+color: #FFFF00;
+text-shadow: 1px 0px 3px #000, -1px 0 3px #000;
+font-size: 23px;
+font-weight: bold;
+position: absolute;
+z-index: 5;
+}
+
+#dmgPet1 {
+top: 55%;
+left: 29%;
+}
+
+#dmgPet2 {
+top: 75%;
+left: 19%;
+}
+
+#dmgPet3 {
+top: 30%;
+left: 19%;
+}
+
+#dmgEvil1 {
+top: 55%;
+right: 29%;
+}
+
+#dmgEvil2 {
+top: 75%;
+right: 19%;
+}
+
+#dmgEvil3 {
+top: 30%;
+right: 19%;
+}
+
+#bLine1, #bLine2, #bLine3 {
+position:absolute;
+top: 48.5%;
+}
+
+#bLine1 {
+z-index: 2;
+}
+
+#bLine2 {
+z-index: 1;
+}
+
+#bLine3 {
+z-index: 0;
 }

@@ -5,7 +5,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { Storage } from '@ionic/storage';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
-import { HomePage } from '../pages/home/home';
 import { HangarPage } from '../pages/hangar/hangar';
 @Component({
   templateUrl: 'app.html'
@@ -20,20 +19,8 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
       splashScreen.hide();
-      this.setStartPage();
-      screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+      //screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
     });
   }
-
-  setStartPage(){
-  this.storage.get('FirstGame').then((newToGame) => {       
-
-  if(newToGame == 'First'){
-      // If they're new to the game, send them to HomePage
-      this.rootPage = 'HomePage';  
-  }
- });
-}
-
 }
 

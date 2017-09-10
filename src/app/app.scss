@@ -15,6 +15,30 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
+@media screen and (min-width: 750px) and (min-height: 1000px) {
+   html {
+zoom: 200%;
+   }
+}
+
+@media screen and (max-width: 380px) and (max-height: 670px) {
+   html {
+zoom: 100%;
+   }
+}
+
+@media screen and (max-width: 380px) and (max-height: 670px) {
+   html {
+zoom: 100%;
+   }
+}
+
+@media screen and (min-width: 400px) and (max-height: 740px) {
+   html {
+zoom: 110%;
+   }
+}
+
 @font-face {
   font-family: BebasNeue;
   src: url('../assets/font/BebasNeue.otf')
@@ -123,6 +147,7 @@ white-space: nowrap;
   height:25px;
   top: 53.5%;
   left: 30%;
+  z-index: 5;
 }
 
 #defButton2 {
@@ -132,6 +157,7 @@ white-space: nowrap;
   height:25px;
   top: 68.5%;
   left: 30%;
+  z-index: 5;
 }
 
 #defButton3 {
@@ -141,6 +167,7 @@ white-space: nowrap;
   height:25px;
   top: 83.5%;
   left: 30%;
+  z-index: 5;
 }
 
 #PlanetBG {
@@ -176,19 +203,21 @@ white-space: nowrap;
 #startBattle {
   position: absolute;
   box-shadow: 1px 2px 4px #000000;
-  width:100px;
-  height:45px;
-  top: 60%;
-  right: 35%;
+  width:80px;
+  height:35px;
+  top: 90%;
+  right: 37%;
+  z-index: 6;
 }
 
 #resetFight {
   position: absolute;
   box-shadow: 1px 2px 4px #000000;
   width:70px;
-  height:40px;
-  top: 70%;
-  right: 40%;
+  height:25px;
+  top: 48%;
+  right: 38%;
+  z-index: 6;
 }
 
 #atkButton1 {
@@ -198,6 +227,7 @@ white-space: nowrap;
   height:25px;
   top: 53.5%;
   right: 30%;
+  z-index: 5;
 }
 
 #atkButton2 {
@@ -207,6 +237,7 @@ white-space: nowrap;
   height:25px;
   top: 68.5%;
   right: 30%;
+  z-index: 5;
 }
 
 #atkButton3 {
@@ -216,6 +247,7 @@ white-space: nowrap;
   height:25px;
   top: 83.5%;
   right: 30%;
+  z-index: 5;
 }
 
 #turnBGG1 {
@@ -226,6 +258,7 @@ white-space: nowrap;
   height:60px;
   top: 51%;
   z-index: 0;
+  z-index: 4;
 }
 
 #turnBGG2 {
@@ -235,6 +268,7 @@ white-space: nowrap;
   width:100%;
   height:60px;
   top: 66%;
+  z-index: 4;
 }
 
 #turnBGG3 {
@@ -244,6 +278,7 @@ white-space: nowrap;
   width:100%;
   height:60px;
   top: 81%;
+  z-index: 4;
 }
 
 #pokeSprite1 {
@@ -287,11 +322,12 @@ position: absolute;
 box-shadow: 2px 2px 3px #000000;
 top: 50%;
 left: 5%;
-z-index: 2;
+z-index: 4;
 -moz-transform: scaleX(-1);
 -o-transform: scaleX(-1);
 -webkit-transform: scaleX(-1);
  transform: scaleX(-1);
+ filter: grayscale(0%);
 }
 
 #pokeBattle2 {
@@ -299,11 +335,12 @@ position: absolute;
 box-shadow: 2px 2px 3px #000000;
 top: 65%;
 left: 5%;
-z-index: 3;
+z-index: 4;
 -moz-transform: scaleX(-1);
 -o-transform: scaleX(-1);
 -webkit-transform: scaleX(-1);
  transform: scaleX(-1);
+ filter: grayscale(0%);
 }
 
 #pokeBattle3 {
@@ -316,6 +353,7 @@ z-index: 4;
 -o-transform: scaleX(-1);
 -webkit-transform: scaleX(-1);
  transform: scaleX(-1);
+ filter: grayscale(0%);
 }
 
 #evilBattle1 {
@@ -324,6 +362,7 @@ box-shadow: 2px 2px 3px #000000;
 top: 50%;
 right: 5%;
 z-index: 5;
+filter: grayscale(0%);
 }
 
 #evilBattle2 {
@@ -332,6 +371,7 @@ box-shadow: 2px 2px 3px #000000;
 top: 65%;
 right: 5%;
 z-index: 6;
+filter: grayscale(0%);
 }
 
 #evilBattle3 {
@@ -340,6 +380,7 @@ box-shadow: 2px 2px 3px #000000;
 top: 80%;
 right: 5%;
 z-index: 7;
+filter: grayscale(0%);
 }
 
 #exploreHangar {

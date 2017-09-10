@@ -22,7 +22,9 @@ export class BattlePage {
 
   public petTarget: number = 1; // Goes up every time a pet completes an action. If petTarget == 1 then Pet1's turn, if 2 then pet2, etc.
   public petTurns: any = ["", "", ""];// Used to determine order of attack and decide which pet attacked which enemy
-  public enemyAmount: any;
+  public enemyAmount: number = 0;
+  public petAmount: number = 1; // Amount of pets the player has, minimum of 1.
+  public phaseAmount: number = 0; // Checks how many enemies and pets are alive to determine the amount of phases.
   public enemyStats: any; // Saves enemy stats on page load
 
   public petStats1: any = "None"; // Saves allied pet stats on page load
@@ -55,27 +57,57 @@ export class BattlePage {
   public turnBG2: boolean = false; 
   public turnBG3: boolean = false; 
 
-  public onButtonClick(target) {
-   if(this.petTarget == 1){
+public onButtonClick(target) {
+   if(this.petTarget == 1){ // If petTarget is == 1, then Pet1 is alive and we don't need to run a check.
    this.petTurns[0] = "DEF" + target;
-   this.buttonClicked = !this.buttonClicked; // Bring back first pet assist button
-   this.buttonClicked2 = !this.buttonClicked2; // Remove 2nd pet assist button since it will be his turn now.
-   this.turnBG1 = !this.turnBG1;
-   this.turnBG2 = !this.turnBG2;
-   this.petTarget++;
+       // Now that Pet1 has attacked, set BG and buttons for next Pet
+       if(this.petAlive2 !== "No"){ // If Pet2 is alive, then it's his turn to choose a target.
+       this.buttonClicked2 = false; // Remove assist button
+       this.buttonClicked = true;
+       this.turnBG2 = true;
+       this.turnBG1 = false;
+       this.turnBG3 = false;
+       this.petTarget = 2;
+          if(this.petAlive3 !== "No"){ // If Pet3 is also alive
+          this.buttonClicked3 = true;
+          }
+        } else if(this.petAlive3 !== "No"){ // If pet2 is not alive and pet3 is alive, skip to pet3
+          this.turnBG1 = false;
+          this.turnBG2 = false;
+          this.turnBG3 = true;
+          this.buttonClicked3 = false; 
+          this.buttonClicked2 = false; // Pet2 is dead so we cant' ASSIST him
+          this.buttonClicked = true;
+          this.petTarget = 3;
+       } else {
+          this.disableButtons(); // If both Pet2 and Pet3 are dead, disable all buttons and END move selection.
+       }
    } else if(this.petTarget == 2){
    this.petTurns[1] = "DEF" + target;
-   this.buttonClicked2 = !this.buttonClicked2; // Bring back 2nd pet assist button since it's 3rd pet's turn now
-   this.buttonClicked3 = !this.buttonClicked3; // Remove third player button
-   this.turnBG2 = !this.turnBG2;
-   this.turnBG3 = !this.turnBG3;
-   this.petTarget++;
+       // Now that Pet1 has attacked, set BG and buttons for next Pet
+       if(this.petAlive3 !== "No"){ // If Pet3 is alive, then it's his turn to choose a target.
+       this.buttonClicked2 = true; 
+       this.buttonClicked3 = false; // Remove assist button
+       this.turnBG2 = false;
+       this.turnBG1 = false;
+       this.turnBG3 = true;
+       this.petTarget = 3;
+          if(this.petAlive1 !== "No"){ // If Pet1 is also alive
+          this.buttonClicked = true;
+          }
+        } else { // If Pet3 is not alive, end the fight.
+          this.disableButtons(); // If both Pet2 and Pet3 are dead, disable all buttons and END move selection.
+       }
    } else if(this.petTarget == 3){
-   this.petTarget++;
-   this.petTurns[2] = "DEF" + target;
+   this.disableButtons(); // After Pet3 select it's move, always END move selection.
+  }
+}
+
+  disableButtons(){
    // Now that all actions have been taken, remove all buttons and show FIGHT and RESET buttons.
    this.buttonClicked = false;
    this.buttonClicked2 = false; 
+   this.buttonClicked3 = false; 
    this.showEnemy1 = false; 
    this.showEnemy2 = false;
    this.showEnemy3 = false;
@@ -83,8 +115,9 @@ export class BattlePage {
    this.resetOrder = true;
    this.startCombat = true;
    // Remove BG
+   this.turnBG1 = false;
+   this.turnBG2 = false;
    this.turnBG3 = false;
-   }
   }
 
   ionViewDidLoad() {
@@ -99,58 +132,132 @@ export class BattlePage {
 
    this.partySprites();
    this.planetEnemies(planet, level);
-   }, 200);  
+   }, 80);  
   }
 
   // Animate test
-  animateTest(num, who){
-
-  var pokeFieldNum = "Field" + num; // Animate all pokemon
+  /*
+  num = Which Pet or Enemy is animating. Will return 1,2 or 3.
+  who = Who is attacking. Values are Pet and Evil
+  moveType = ATK, DEF and abilities in the future. Different animations and targets for all.
+  target = Target of the animation. Depends on moveType.
+  damage = Damage number displayed on screen
+  special = 'dead' or 'none' for now. Will be used for abilities later on.
+  */
+  regularAttack(num, who, moveType, target, damage, special){
+  setTimeout(() => {
+  var fieldNum = "Field" + num; // Will be used to get the elementId (pokeField1,2,3 or evilField1,2.3)
+  var fieldTarget = "Field" + target; 
   var pokeMove;
+  var targetMove;
+  var txtMove;
+
+  // Used to adjust brightness.
+  var blink = 1;
+
+  // Move a target back upon getting hit
+  var atkBack = -3;
 
   var pos = 0;
-  var moveBack = 0;
-  var moveFront = 1;
-  var moveToDefault = 1;
-  if(who == 'E'){
-  pokeMove = document.getElementById("evil" + pokeFieldNum) as HTMLImageElement;
-  var moveTimer = setInterval(animateThisEnemy, 6); //5 For Auto x2 version, 7 for regular.
-  } else if(who == 'P'){
-  pokeMove = document.getElementById("poke" + pokeFieldNum) as HTMLImageElement;
-  var moveTimer = setInterval(animateThisAlly, 6); //5 For Auto x2 version, 7 for regular. 
-  }
+  var move = 0;
+  var text = 2;
 
   var initialPosition;
+  var initialText;
   
   if(num == 1){
   initialPosition = 21;
+  initialText = 55; 
   }else if(num == 2){
   initialPosition = 7;
+  initialText = 75;
   }else if(num == 3){
   initialPosition = 10;
+  initialText = 30;
+  }
+
+  var targetInitial;
+  
+  if(target == 1){
+  targetInitial= 21;
+  initialText = 55; 
+  }else if(target == 2){
+  targetInitial = 7;
+  initialText = 75; 
+  }else if(target == 3){
+  targetInitial = 10;
+  initialText = 30; 
+  }
+
+  if(who == 'evil'){
+  pokeMove = document.getElementById('evil' + fieldNum) as HTMLImageElement;
+   if(moveType == 'ATK'){ // If ATK, then target is a friendly pet
+  targetMove = document.getElementById('poke' + fieldTarget) as HTMLImageElement; 
+  txtMove = document.getElementById('dmgPet' + target) as HTMLImageElement; 
+  txtMove.style.top = initialText + '%';
+  txtMove.innerText = damage;
+  txtMove.style.opacity = 1;
+   }else if(moveType == 'DEF'){ // If DEF then target is an ally.
+  targetMove = document.getElementById('evil' + fieldTarget) as HTMLImageElement;    
+   }
+  var moveTimer = setInterval(animateThisEnemy, 6); //5 For Auto x2 version, 7 for regular.
+  } else if(who == 'poke'){
+  pokeMove = document.getElementById("poke" + fieldNum) as HTMLImageElement;
+   if(moveType == 'ATK'){ // If ATK, then target is an enemy
+  targetMove = document.getElementById('evil' + fieldTarget) as HTMLImageElement; 
+  txtMove = document.getElementById('dmgEvil' + target) as HTMLImageElement;
+  txtMove.style.top = initialText + '%';
+  txtMove.innerText = damage;
+  txtMove.style.opacity = 1;
+   }else if(moveType == 'DEF'){ // If DEF then target is an ally.
+  targetMove = document.getElementById('poke' + fieldTarget) as HTMLImageElement;    
+   }
+  var moveTimer = setInterval(animateThisAlly, 6); //5 For Auto x2 version, 7 for regular. 
   }
 
   function animateThisAlly(){
   
-    var currentPosition = initialPosition - moveBack; // Get the current position
-    var newPositionFront = currentPosition + moveFront;
-    var newPositionFinal = newPositionFront - moveToDefault;
+    var currentPosition = initialPosition - move; // Get the current position
 
     if (pos == 40) {
-      clearInterval(moveTimer);
-      console.log("Finished");
+      clearInterval(moveTimer); // Stop the timer to end the animation
     } else if(pos <= 6) {
-      pokeMove.style.left = currentPosition + '%'; //Move him back 4%. Current Pos at 6%
-      moveBack++;
+      pokeMove.style.left = currentPosition + '%'; //Move back 6%;
+      move++;
       pos++; 
-    } else if(pos > 6 && pos < 28){
-      pokeMove.style.left = newPositionFront + '%'; //Move him forward 8%
-      moveFront++;
+    } else if(pos > 6 && pos < 30){
+      pokeMove.style.left = currentPosition + '%'; //Move forward 22%
+      move--;
       pos++; 
-    } else if(pos >= 28){ // If he's not back where he started,
-      pokeMove.style.left = newPositionFinal + '%'; //Move him back
-      moveToDefault++;
-        if(newPositionFinal == initialPosition){
+      txtMove.style.top = initialText - text + '%';
+      text = text + 1.1;
+      if(pos >=10 && pos < 20){ // Animate the target of the attack
+        if(moveType == 'ATK'){ // If it's an attack, target is an enemy'
+        targetMove.style.right = (targetInitial - atkBack) + '%';
+        targetMove.style.filter = 'brightness(' + blink + ')';
+        atkBack++;
+        blink = blink + 2;
+        }else if (moveType == 'DEF'){ // If it's DEF, target is an ally
+        targetMove.style.filter = 'brightness(' + blink + ')';
+        blink = blink + 2;
+        }
+      }
+    } else if(pos >= 30){
+      pokeMove.style.left = currentPosition + '%'; //Move back to starting point
+      if(atkBack > 1){ // Set ATK target back to regular position
+      targetMove.style.right = (targetInitial - atkBack) + '%';
+      atkBack--;
+      }
+      if(blink > 1){
+       targetMove.style.filter = 'brightness(1)'; // Set brightness back to normal. 
+       txtMove.style.opacity = 0; // Make text disapear
+       txtMove.innerText = '';
+      }
+      if(special == 'dead'){
+       targetMove.style.opacity = 0;
+      }
+      move++;
+        if(currentPosition == initialPosition){
         // If he's back to where he started
         pos = 40;
         }
@@ -159,35 +266,58 @@ export class BattlePage {
 
   function animateThisEnemy(){
   
-    var currentPosition = initialPosition - moveBack; // Get the current position
-    var newPositionFront = currentPosition + moveFront;
-    var newPositionFinal = newPositionFront - moveToDefault;
+    var currentPosition = initialPosition - move; // Get the current position
 
     if (pos == 40) {
-      clearInterval(moveTimer);
-      console.log("Finished");
+      clearInterval(moveTimer); // Stop the timer to end the animation
     } else if(pos <= 6) {
-      pokeMove.style.right = currentPosition + '%'; //Move him back 4%. Current Pos at 6%
-      moveBack++;
+      pokeMove.style.right = currentPosition + '%'; //Move back 6%;
+      move++;
       pos++; 
     } else if(pos > 6 && pos < 28){
-      pokeMove.style.right = newPositionFront + '%'; //Move him forward 8%
-      moveFront++;
-      pos++; 
-    } else if(pos >= 28){ // If he's not back where he started,
-      pokeMove.style.right = newPositionFinal + '%'; //Move him back
-      moveToDefault++;
-        if(newPositionFinal == initialPosition){
+      pokeMove.style.right = currentPosition + '%'; //Move forward 22%
+      move--;
+      pos++;
+      txtMove.style.top = initialText - text + '%';
+      text = text + 1.1;
+      if(pos >=10 && pos < 20){ // Animate the target of the attack
+        if(moveType == 'ATK'){ // If it's an attack, target is an enemy'
+        targetMove.style.left = (targetInitial - atkBack) + '%';
+        targetMove.style.filter = 'brightness(' + blink + ')';
+        atkBack++;
+        blink = blink + 2;
+        }else if (moveType == 'DEF'){ // If it's DEF, target is an ally
+        targetMove.style.filter = 'brightness(' + blink + ')';
+        blink = blink + 2;
+        }
+      }
+    } else if(pos >= 28){
+      pokeMove.style.right = currentPosition + '%'; //Move back to starting point
+      if(atkBack > 1){ // Set ATK target back to regular position
+      targetMove.style.left = (targetInitial - atkBack) + '%';
+      atkBack--;
+      }
+      if(blink > 1){
+       targetMove.style.filter = 'brightness(1)'; // Set brightness back to normal.  
+       txtMove.style.opacity = 0; // Make text disapear
+       txtMove.innerText = '';
+      }
+      if(special == 'dead'){
+       targetMove.style.opacity = 0;
+      }
+      move++;
+        if(currentPosition == initialPosition){
         // If he's back to where he started
         pos = 40;
         }
     }
     }
-    if(who == "E"){ //Animate if enemy, else animate ally
+    if(who == "evil"){ //Animate if enemy, else animate ally
     animateThisEnemy();
-    } else if(who == "P"){
+    } else if(who == "poke"){
     animateThisAlly();
     }
+   }, 100);
   }
 
   // Sets the sprites of your pet party
@@ -203,8 +333,10 @@ export class BattlePage {
   this.petStats1 = petInfo1; // Set Pet stats as public variable
   this.petAlive1 = "Yes";
   this.turnBG1 = true;
+  this.petAmount = 1;
   document.getElementById("pokeView1").innerHTML = '<img id="pokeBattle1" src="../assets/combat/' + petInfo1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP1"><h1>'+ petInfo1["curVIT"] + ' / ' + petInfo1["maxVIT"] +'</h1></div>';
-   });  
+  document.getElementById("bfPet1").innerHTML = '<img id="pokeField1" src="../assets/hangar/' + petInfo1["sprite"] + '.png" style="width: 70px; height: 70px;" />';
+  });  
   }
 
   if(profileInfo["Pet2"] == "Yes"){
@@ -212,8 +344,10 @@ export class BattlePage {
   var petInfo2 = JSON.parse(data2);
   this.petStats2 = petInfo2; 
   this.petAlive2 = "Yes";
+  this.petAmount = 2;
   this.buttonClicked2 = true; // If they have a 2nd or 3rd Pet, add the ASSIST buttons.
   document.getElementById("pokeView2").innerHTML = '<img id="pokeBattle2" src="../assets/combat/' + petInfo2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP2"><h1>'+ petInfo2["curVIT"] + ' / ' + petInfo2["maxVIT"] +'</h1></div>';
+  document.getElementById("bfPet2").innerHTML = '<img id="pokeField2" src="../assets/hangar/' + petInfo2["sprite"] + '.png" style="width: 70px; height: 70px;" />';
    });   
   }
 
@@ -222,7 +356,9 @@ export class BattlePage {
   var petInfo3 = JSON.parse(data3);
   this.petStats3 = petInfo3; 
   this.petAlive3 = "Yes";
+  this.petAmount = 3;
   document.getElementById("pokeView3").innerHTML = '<img id="pokeBattle3" src="../assets/combat/' + petInfo3["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP3"><h1>'+ petInfo3["curVIT"] + ' / ' + petInfo3["maxVIT"] +'</h1></div>';
+  document.getElementById("bfPet3").innerHTML = '<img id="pokeField3" src="../assets/hangar/' + petInfo3["sprite"] + '.png" style="width: 70px; height: 70px;" />';
    this.buttonClicked3 = true;
   }); 
   }
@@ -257,9 +393,9 @@ export class BattlePage {
    // If multiple enemies we need to nest the objects/arrays. Amount determines how many enemies in the object
    var level10 = {
                    amount: "3",
-                   enemy1 : { 'name': "POLIWHIRL", 'sprite': "4", 'LVL': "1", 'curVIT': "8", 'maxVIT': "8", 'ATK': "4", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
-                   enemy2 : { 'name': "UMBREON", 'sprite': "6", 'LVL': "1", 'curVIT': "8", 'maxVIT': "8", 'ATK': "4", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
-                   enemy3 : { 'name': "MUDKIPS", 'sprite': "3", 'LVL': "1", 'curVIT': "8", 'maxVIT': "8", 'ATK': "4", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""}
+                   enemy1 : { 'name': "POLIWHIRL", 'sprite': "4", 'LVL': "1", 'curVIT': "15", 'maxVIT': "15", 'ATK': "8", 'DEF': "5", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
+                   enemy2 : { 'name': "UMBREON", 'sprite': "6", 'LVL': "1", 'curVIT': "15", 'maxVIT': "15", 'ATK': "8", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
+                   enemy3 : { 'name': "MUDKIPS", 'sprite': "3", 'LVL': "1", 'curVIT': "15", 'maxVIT': "15", 'ATK': "8", 'DEF': "6", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""}
                       };
 
    // Make array with all enemies, then use level & array to determine which enemy
@@ -270,7 +406,7 @@ export class BattlePage {
    var levelInfo = allEnemies["evil" + level];
 
    this.enemyStats = levelInfo;
-   this.enemyAmount = levelInfo["amount"];
+   this.enemyAmount = parseInt(levelInfo["amount"]);
 
    // If there are more than one enemies, get their information.
    var enemyInfo1 = levelInfo["enemy1"];
@@ -281,7 +417,8 @@ export class BattlePage {
    this.eneAlive1 = "Yes";
    this.showEnemy1 = true; // Shows attack button
    document.getElementById("evilView1").innerHTML = '<img id="evilBattle1" src="../assets/combat/' + levelInfo["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP1"><h1>'+ levelInfo["curVIT"] + ' / ' + levelInfo["maxVIT"] +'</h1></div>';
- 
+    // Battlefield pics underneath
+   document.getElementById("bfEvil1").innerHTML = '<img id="evilField1" src="../assets/hangar/' + levelInfo["sprite"] + '.png" style="width: 70px; height: 70px;" />';
    } else if(levelInfo["amount"] == '2') {
    this.eneAlive1 = "Yes";
    this.eneAlive2 = "Yes";
@@ -290,6 +427,8 @@ export class BattlePage {
   document.getElementById("evilView1").innerHTML = '<img id="evilBattle1" src="../assets/combat/' + enemyInfo1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP1"><h1>'+ enemyInfo1["curVIT"] + ' / ' + enemyInfo1["maxVIT"] +'</h1></div>';
   document.getElementById("evilView2").innerHTML = '<img id="evilBattle2" src="../assets/combat/' + enemyInfo2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP2"><h1>'+ enemyInfo2["curVIT"] + ' / ' + enemyInfo2["maxVIT"] +'</h1></div>';
 
+  document.getElementById("bfEvil1").innerHTML = '<img id="evilField1" src="../assets/hangar/' + enemyInfo1["sprite"] + '.png" style="width: 70px; height: 70px;" />';
+  document.getElementById("bfEvil2").innerHTML = '<img id="evilField2" src="../assets/hangar/' + enemyInfo2["sprite"] + '.png" style="width: 70px; height: 70px;" />';
    } else if(levelInfo["amount"] == '3') {
    this.eneAlive1 = "Yes";
    this.eneAlive2 = "Yes";
@@ -297,9 +436,14 @@ export class BattlePage {
    this.showEnemy1 = true; 
    this.showEnemy2 = true;
    this.showEnemy3 = true;
+   // Pictures for the bottom of the screen, where Button selection/ Move selection phase 
   document.getElementById("evilView1").innerHTML = '<img id="evilBattle1" src="../assets/combat/' + enemyInfo1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP1"><h1>'+ enemyInfo1["curVIT"] + ' / ' + enemyInfo1["maxVIT"] +'</h1></div>';
   document.getElementById("evilView2").innerHTML = '<img id="evilBattle2" src="../assets/combat/' + enemyInfo2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP2"><h1>'+ enemyInfo2["curVIT"] + ' / ' + enemyInfo2["maxVIT"] +'</h1></div>';
   document.getElementById("evilView3").innerHTML = '<img id="evilBattle3" src="../assets/combat/' + enemyInfo3["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP3"><h1>'+ enemyInfo3["curVIT"] + ' / ' + enemyInfo3["maxVIT"] +'</h1></div>';
+  // Pictures of the enemies on the battlefield
+  document.getElementById("bfEvil1").innerHTML = '<img id="evilField1" src="../assets/hangar/' + enemyInfo1["sprite"] + '.png" style="width: 70px; height: 70px;" />';
+  document.getElementById("bfEvil2").innerHTML = '<img id="evilField2" src="../assets/hangar/' + enemyInfo2["sprite"] + '.png" style="width: 70px; height: 70px;" />';
+  document.getElementById("bfEvil3").innerHTML = '<img id="evilField3" src="../assets/hangar/' + enemyInfo3["sprite"] + '.png" style="width: 70px; height: 70px;" />';
    }
   
    }
@@ -307,116 +451,238 @@ export class BattlePage {
 
   // Choose which pet attacks and save that value to the petTurns array.
   chooseTarget(target){
+  // Adds the targeting lines
+  var lineIMG = document.getElementById('bLine' + this.petTarget) as HTMLImageElement;
+  lineIMG.src = '../assets/combat/atk' + this.petTarget + '' + target + '.png';
   // Determine the fight order. Ally pet goes first, then enemy, then ally pet, then enemy, etc.
-   if(this.petTarget == 1){
+   if(this.petTarget == 1){ // If petTarget is == 1, then Pet1 is alive and we don't need to run a check.
    this.petTurns[0] = "ATK" + target;
-   this.petTarget++;
-   this.buttonClicked = !this.buttonClicked; // Bring back first pet assist button
-   this.buttonClicked2 = !this.buttonClicked2; // Remove 2nd pet assist button since it will be his turn now.
-   this.turnBG1 = !this.turnBG1;
-   this.turnBG2 = !this.turnBG2;
+       // Now that Pet1 has attacked, set BG and buttons for next Pet
+       if(this.petAlive2 !== "No"){ // If Pet2 is alive, then it's his turn to choose a target.
+       this.buttonClicked2 = false; // Remove assist button
+       this.buttonClicked = true;
+       this.turnBG2 = true;
+       this.turnBG1 = false;
+       this.turnBG3 = false;
+       this.petTarget = 2;
+          if(this.petAlive3 !== "No"){ // If Pet3 is also alive
+          this.buttonClicked3 = true;
+          }
+        } else if(this.petAlive3 !== "No"){ // If pet2 is not alive and pet3 is alive, skip to pet3
+          this.turnBG1 = false;
+          this.turnBG2 = false;
+          this.turnBG3 = true;
+          this.buttonClicked3 = false; 
+          this.buttonClicked2 = false; // Pet2 is dead so we cant' ASSIST him
+          this.buttonClicked = true;
+          this.petTarget = 3;
+       } else {
+          this.disableButtons(); // If both Pet2 and Pet3 are dead, disable all buttons and END move selection.
+       }
    } else if(this.petTarget == 2){
    this.petTurns[1] = "ATK" + target;
-   this.petTarget++;
-   this.buttonClicked2 = !this.buttonClicked2; // Bring back 2nd pet assist button since it's 3rd pet's turn now
-   this.buttonClicked3 = !this.buttonClicked3; // Remove third player button
-   this.turnBG2 = !this.turnBG2;
-   this.turnBG3 = !this.turnBG3;
+       // Now that Pet1 has attacked, set BG and buttons for next Pet
+       if(this.petAlive3 !== "No"){ // If Pet3 is alive, then it's his turn to choose a target.
+       this.buttonClicked2 = true; 
+       this.buttonClicked3 = false; // Remove assist button
+       this.turnBG2 = false;
+       this.turnBG1 = false;
+       this.turnBG3 = true;
+       this.petTarget = 3;
+          if(this.petAlive1 !== "No"){ // If Pet1 is also alive
+          this.buttonClicked = true;
+          }
+        } else { // If Pet3 is not alive, end the fight.
+          this.disableButtons(); // If both Pet2 and Pet3 are dead, disable all buttons and END move selection.
+       }
    } else if(this.petTarget == 3){
-   this.petTarget++;
    this.petTurns[2] = "ATK" + target;
-   // Now that all actions have been taken, remove all buttons and show FIGHT and RESET buttons.
-   this.buttonClicked = false;
-   this.buttonClicked2 = false; 
-   this.showEnemy1 = false; 
-   this.showEnemy2 = false;
-   this.showEnemy3 = false;
-   // Make FIGHT and RESET buttons appear
-   this.resetOrder = true;
-   this.startCombat = true;
-   // Remove BG
-   this.turnBG3 = false;
-   }
+   this.disableButtons(); // After Pet3 select it's move, always END move selection.
   }
+}
 
   // Reset attack turns and make buttons come back
-  resetTargets(){
+ resetTargets(){
 
   // Do something if all enemies are dead
-  if(parseInt(this.enemyAmount) <= this.enemyDeadCount){
+  if(this.enemyAmount == this.enemyDeadCount){
   console.log("You win!");
-  } else if (parseInt(this.enemyAmount) <= this.petDeadCount) { // Do something if all pets are dead
+   this.navCtrl.pop();
+  } else if (this.petAmount == this.petDeadCount) { // Do something if all pets are dead
   console.log("You lose!");
+   this.navCtrl.pop();
   } else {
-  this.petTarget = 1;
   this.petTurns = ["", "", ""];
-
-  this.storage.get('PilotInfo').then((data) => {
-  var profileInfo = JSON.parse(data); 
- 
-  if(profileInfo["Pet1"] == "Yes"){
-    // Do nothing if he only has 1 pet.
-  }
-
-  if(profileInfo["Pet2"] == "Yes"){
-  this.buttonClicked2 = !this.buttonClicked2; // If they have a 2nd or 3rd Pet, add the ASSIST buttons. 
-  }
-
-  if(profileInfo["Pet3"] == "Yes"){
-   this.buttonClicked3 = !this.buttonClicked3;
-  }
-  });
- // Reset all ATTACK buttons regardless based on how many enemy
-  if(this.enemyAmount == '1'){
-   this.showEnemy1 = true;
-  } else if(this.enemyAmount == '2'){
-   this.showEnemy1 = true;
-   this.showEnemy2 = true;
-  } else if(this.enemyAmount == '3'){
-   this.showEnemy1 = true;
-   this.showEnemy2 = true;
-   this.showEnemy3 = true;
-  }
+  //Turns off all buttons except ATK buttons.
+   this.turnBG1 = false; // BG
+   this.turnBG2 = false;
+   this.turnBG3 = false;
+   this.buttonClicked = false; // ASSIST
+   this.buttonClicked2 = false;
+   this.buttonClicked3 = false;
+   // Reset combat lines
+   var lineIMG1 = document.getElementById('bLine1') as HTMLImageElement;
+   var lineIMG2 = document.getElementById('bLine2') as HTMLImageElement;
+   var lineIMG3 = document.getElementById('bLine3') as HTMLImageElement;
+   lineIMG1.src = '../assets/combat/linenone.png';
+   lineIMG2.src = '../assets/combat/linenone.png';
+   lineIMG3.src = '../assets/combat/linenone.png';
    // Make FIGHT and RESET buttons DISAPPEAR
    this.resetOrder =  false;
    this.startCombat = false;
-   // Make BG Reappear (only need the first one)
-   this.turnBG1 = true;
-  }
-  }
-
-  testVariables(){
-      var movePet1 = this.petTurns[0].substring(0, 3); //First pet's move. Returns 3 letters; either DEF or ATK to determine the type of move.
-      
-
-      var targetMove1 = this.petTurns[0].substring(3); // Who the pet is tagetting with it's move. Removes first 3 letters to return a value 1, 2 or 3
- console.log(movePet1);
- console.log(targetMove1);
+  //Check which enemies are dead. Only give ATK buttons to the alive ones.
+  if(this.eneAlive1 !== "No"){
+  this.showEnemy1 = true;
   }
 
-  startFight(){
+  if(this.eneAlive2 !== "No"){
+  this.showEnemy2 = true;  
+  }
+
+  if(this.eneAlive3 !== "No"){
+  this.showEnemy3 = true; 
+  }
+
+  if(this.petAlive1 !== "No"){ // If Pet1 is not dead (if he's alive)
+  this.turnBG1 = true;
+  this.petTarget = 1;
+      if(this.petAlive2 !== "No"){ 
+      this.buttonClicked2 = true; // Check if Pet2 is alive. If yes, turn on assist button
+      }
+      if(this.petAlive3 !== "No"){
+      this.buttonClicked3 = true; // Check if Pet3 is alive. If yes, turn on assist button
+      }
+  } else if(this.petAlive2 !== "No"){ // If Pet1 is dead, Pet2 takes the lead.
+    this.turnBG2 = true;
+     this.petTarget = 2;
+      if(this.petAlive3 !== "No"){ 
+      this.buttonClicked3 = true; // We already know Pet1 is dead, so just check if Pet3 is alive. If yes, turn on assist button.
+      }
+   } else if(this.petAlive3 !== "No"){
+     this.turnBG3 = true;
+     this.petTarget = 3;
+   }
+  }
+ }
+
+ //Randomly chooses target for enemies and AIs
+ enemyAI(currentEnemy){
+ // 80% chance to ATK, 20% chance to def.
+ var moveChance = Math.round(Math.random() * 100) + 1;
+ var atkChance = Math.round(Math.random() * 100) + 1;
+ var strongColor;
+ var target = 1; // Which pet he's targeting; 1, 2 or 3
+ var pet1Color; 
+ var pet2Color;
+ var pet3Color;
+ var pet1HP = 999;
+ var pet2HP = 999; // This guarantees that they can't win the check for least health, incase those pets are dead or not in the game.
+ var pet3HP = 999;
+
+   if(currentEnemy["color"] == "red"){
+     strongColor = 'green';
+   } else if(currentEnemy["color"] == "green"){
+      strongColor = 'blue';
+   } else if(currentEnemy["color"] == "blue"){
+      strongColor = 'red';
+   } else { // If purple or gold
+      strongColor = 'none';
+   }
+
+  if(this.petAlive1 !== "No"){
+  pet1Color = this.petStats1["color"];
+  pet1HP = parseInt(this.petStats1["curVIT"]);
+  }
+
+ if(this.petAlive2 !== "No"){
+ pet2Color = this.petStats2["color"];
+ pet2HP = parseInt(this.petStats2["curVIT"]);
+ }
+
+ if(this.petAlive3 !== "No"){
+ pet3Color = this.petStats3["color"];
+ parseInt(this.petStats3["curVIT"]);
+ }
+
+ if(moveChance < 100){ // 80% chance to ATK. Set to 100 for now, since DEF isn't implemented yet.
+ var moveType = 'ATK';
+    if(atkChance < 70){     
+        //compare colors and return a winner
+        if(pet1Color == strongColor){
+         target = 1;
+         } else if(pet2Color == strongColor){
+         target = 2;
+         } else if(pet3Color == strongColor){
+         target = 3;
+         } else { // If none of them are weak to it, attack the one with the least health. If all at 100%, attack pet1
+            if(pet1HP < pet2HP){
+                if(pet1HP < pet3HP){
+                   target = this.petStats1; // If pet1 HP is smaller than Pet2 and pet3 HP, pet1 is the target.
+                }
+            } else if(pet2HP < pet3HP){
+                  target = this.petStats2;
+            } else { //If pet2 has less HP than pet1 but more than pet3, pet 3 wins. otherwise pet2 wins.
+                target = this.petStats3;
+            }
+         }
+    } else {
+        if(pet1HP < pet2HP){
+          if(pet1HP < pet3HP){
+            target = this.petStats1; // If pet1 HP is smaller than Pet2 and pet3 HP, pet1 is the target.
+            }
+       } else if(pet2HP < pet3HP){
+           target = this.petStats2;
+        } else { //If pet2 has less HP than pet1 but more than pet3, pet 3 wins. otherwise pet2 wins.
+         target = this.petStats3;
+       }
+    }
+ } else {
+ var moveType = 'DEF'; //20% Chance.
+ }
+
+ return target; //Return the number of the pet targeted.
+}
+
+ startFight(){
   // This is always Phase 1 of the fight. Necessary variables will be moved along to other phases.
+      var movePet = this.petTurns[0].substring(0, 3); //First pet's move. Returns 3 letters; either DEF or ATK to determine the type of move.
+      var targetMove = this.petTurns[0].substring(3); // Who the pet is tagetting with it's move. Removes first 3 letters to return a value 1, 2 or 3
 
-   console.log("Phase 1");
-      // Pet Info 1,2,3, Enemy info : this.enemyStats;, Turn info : this.petTurns;
-      var movePet1 = this.petTurns[0].substring(0, 3); //First pet's move. Returns 3 letters; either DEF or ATK to determine the type of move.
-      var movePet2 = this.petTurns[1].substring(0, 3); // 2nd pet's move
-      var movePet3 = this.petTurns[2].substring(0, 3); // 3rd pet's move 
+      setTimeout(() => {
+      // Remove combat lines before moving to the next phase
+      var lineIMG = document.getElementById('bLine1') as HTMLImageElement;
+      lineIMG.src = '../assets/combat/linenone.png';
+      }, 150);
 
-      var targetMove1 = this.petTurns[0].substring(3); // Who the pet is tagetting with it's move. Removes first 3 letters to return a value 1, 2 or 3
-      var targetMove2 = this.petTurns[1].substring(3); // Who Pet2 is targetting
-      var targetMove3 = this.petTurns[2].substring(3); // Who Pet3 is targetting
+      // If more than 1 enemy, change the value of currentEnemy (It's a different array/object structure)
+      if(this.enemyAmount > 1){
+      var currentEnemy = this.enemyStats["enemy" + targetMove]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
+      } else {
+      var currentEnemy = this.enemyStats;
+      }
 
-      var currentEnemy1 = this.enemyStats["enemy" + targetMove1]; // Get the stats and info of the target. Only accessed if movePet is ATK.
-      var currentEnemy2 = this.enemyStats["enemy" + targetMove2];
-      var currentEnemy3 = this.enemyStats["enemy" + targetMove3];
+      var weakColor; // What color the target is weak to
 
-      // We need to use targetMove to determine WHICH ally pet to ASSIST
+     if(this.petAlive1 !== "No"){ // Check if we have Pet1 is alive or not.
+      //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
+      if(currentEnemy["color"] == "red"){
+      weakColor = 'blue';
+      } else if(currentEnemy["color"] == "green"){
+      weakColor = 'red';
+      } else if(currentEnemy["color"] == "blue"){
+      weakColor = 'green';
+      } else { // If purple or gold
+      weakColor = 'none';
+      }
 
-      if(this.petStats1 !== "None"){ // Check if we have Pet1 stats or not. If he has pet, determine type of attack.
-        if(movePet1 == "DEF"){
-            //Do something if he's defending
-        } else if(movePet1 == "ATK"){
+        if(movePet == "DEF"){
+            //Do something if he's assisting an ally
+             this.regularAttack(1, 'poke', 'DEF', targetMove, 0, 'none');
+                // If greater than 1, there are still enemies alive. Start next phase.
+                setTimeout(() => {
+                this.enemyPhase1();
+              }, 1500);             
+        } else if(movePet == "ATK"){ // Do something if he's attacking an enemy'
            //Pet stats
            var pATK = parseInt(this.petStats1["ATK"]);
            var pMaxATK = pATK / 5;
@@ -427,125 +693,204 @@ export class BattlePage {
            var pColor = this.petStats1["color"];
 
            //Enemy stats
-           var eDEX = parseInt(currentEnemy1["DEX"]);
-           var eDEF = parseInt(currentEnemy1["DEF"]);
-           var eMaxVIT = parseInt(currentEnemy1["maxVIT"]);
-           var eCurVIT = parseInt(currentEnemy1["curVIT"]);
-           var eColor = parseInt(currentEnemy1["color"]);
+           var eDEX = parseInt(currentEnemy["DEX"]);
+           var eDEF = parseInt(currentEnemy["DEF"]);
+           var eMaxVIT = parseInt(currentEnemy["maxVIT"]);
+           var eCurVIT = parseInt(currentEnemy["curVIT"]);
+           var eColor = parseInt(currentEnemy["color"]);
 
            //Calculate damage
 	       var petDMG = Math.ceil((Math.random() * pMaxATK) + pATK); //Return random number between ATK and ATK times 1.2
-           var petDMGBonus = petDMG * 1.5; // Add bonus damage based on color. In Future : Add ColorStrength stat to compare the enemy stat to whatever your pet's color is strong against.
-           var dmgDealt = petDMGBonus - eDEF; // Reduce damage by enemy's defence.
+           if(pColor == weakColor){ // If target has a color disadvantage, deal bonus damage.
+           var petDMGBonus = petDMG * 1.5;  
+           var dmgDealt = Math.ceil(petDMGBonus - eDEF); 
+           } else {
+           var dmgDealt = Math.ceil(petDMG - eDEF); // Reduce damage by enemy's defence.
            // If the enemy has more defence than the amount of damage dealt, damage is set to 0.
+           }
            if(dmgDealt < 0){
               dmgDealt = 0; 
            }
 
            // Reduce enemy health by dmgDealt
-           currentEnemy1["curVIT"] = parseInt(currentEnemy1["curVIT"]) - dmgDealt;
+           currentEnemy["curVIT"] = parseInt(currentEnemy["curVIT"]) - dmgDealt;
 
-           if(currentEnemy1["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
-               //Kill enemy
-               //Remove enemy button
-               // Set public variable for button resets
-               // Replace sprite with dead sprite
-               // Skip the enemy's attack and it's now Phase 3
-               currentEnemy1["curVIT"] = 0;
-             this.battlePhase2(currentEnemy1, currentEnemy2, currentEnemy3, movePet1, movePet2, movePet3, targetMove1, targetMove2, targetMove3);
-           } else { //If not dead, move on to next phase
-             this.battlePhase2(currentEnemy1, currentEnemy2, currentEnemy3, movePet1, movePet2, movePet3, targetMove1, targetMove2, targetMove3);
+           if(currentEnemy["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
+             // Skip the enemy's attack and it's now Pet2's turn, if he's alive
+             currentEnemy["curVIT"] = 0;
+             this.enemyDeadCount++;
+             if(targetMove == 1){
+             this.eneAlive1 = "No";              
+             }else if(targetMove == 2){
+             this.eneAlive2 = "No";              
+             }else if(targetMove == 3){
+             this.eneAlive3 = "No";          
+             }
+             this.regularAttack(1, 'poke', movePet, targetMove, dmgDealt, 'dead'); 
+           } else {
+           // Animate attacking the target. Pet/Enemy number (1,2,3), 'poke' or 'evil', 'ATK' or 'DEF', target number (1,2,3), special (dead, none, abilities, etc.)
+           this.regularAttack(1, 'poke', movePet, targetMove, dmgDealt, 'none'); 
            }
 
+             // If greater than 1, there are still enemies alive. Start next phase.
              setTimeout(() => {
-           // Check which enemy was targeted, and update their picture and health.
-            if(targetMove1 == '1'){
-             document.getElementById("evilView1").innerHTML = '<img id="evilBattle1" src="../assets/combat/' + currentEnemy1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP1"><h1>'+ currentEnemy1["curVIT"] + ' / ' + currentEnemy1["maxVIT"] +'</h1></div>';
-              
-            }else if(targetMove1 == '2'){
-             document.getElementById("evilView2").innerHTML = '<img id="evilBattle2" src="../assets/combat/' + currentEnemy1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP2"><h1>'+ currentEnemy1["curVIT"] + ' / ' + currentEnemy1["maxVIT"] +'</h1></div>';
+             this.enemyPhase1(); // Send to next phase whether dead or alive. Next phase will skip if necessary.
+              }, 1200);             
 
-            }else if(targetMove1 == '3'){
-             document.getElementById("evilView3").innerHTML = '<img id="evilBattle3" src="../assets/combat/' + currentEnemy1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP3"><h1>'+ currentEnemy1["curVIT"] + ' / ' + currentEnemy1["maxVIT"] +'</h1></div>'; 
+           setTimeout(() => {
+           // Check which enemy was targeted, and update their picture and health.
+           if(currentEnemy["curVIT"] == 0){
+            document.getElementById("evilView" + targetMove).innerHTML = '<img id="evilBattle'+ targetMove +'" src="../assets/combat/' + currentEnemy["sprite"] + '.png" style="width: 70px; height: 70px; filter: grayscale(100%);" /><div id="eneHP' + targetMove + '"><h1>'+ currentEnemy["curVIT"] + ' / ' + currentEnemy["maxVIT"] +'</h1></div>';
+            } else {
+            document.getElementById("evilView" + targetMove).innerHTML = '<img id="evilBattle'+ targetMove +'" src="../assets/combat/' + currentEnemy["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP' + targetMove + '"><h1>'+ currentEnemy["curVIT"] + ' / ' + currentEnemy["maxVIT"] +'</h1></div>'; 
             }
-          }, 300);
+          }, 150);
         }
+      } else {
+      // If Pet1 is dead, skip to Pet2's turn.
+      this.petPhase2();
       }
-  }
+ }
 
   // Enemy1's turn after Pet1 went.
-  battlePhase2(currentEnemy1, currentEnemy2, currentEnemy3, movePet1, movePet2, movePet3, targetMove1, targetMove2, targetMove3){
+ enemyPhase1(){
+      // If more than 1 enemy, change the value of currentEnemy
+      if(this.enemyAmount > 1){
+      var currentEnemy = this.enemyStats["enemy1"]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
+      } else {
+      var currentEnemy = this.enemyStats;
+      }
 
-  console.log("Phase 2");
-    targetMove1 = '1';
-  
-        if(this.petStats1 !== "None"){ // Check if we have Pet1 stats or not. If he has pet, determine type of attack.
+      var weakColor; // What color the target is weak to
 
+      //Set AI
+      var targetMove = this.enemyAI(currentEnemy);
+      if(targetMove == 1){
+      var currentPet = this.petStats1;      
+      } else if(targetMove == 2) {
+       var currentPet = this.petStats2;     
+      } else {
+       var currentPet = this.petStats3;     
+      }
+
+      //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
+      if(currentEnemy["color"] == "red"){
+      weakColor = 'blue';
+      } else if(currentEnemy["color"] == "green"){
+      weakColor = 'red';
+      } else if(currentEnemy["color"] == "blue"){
+      weakColor = 'green';
+      } else { // If purple or gold
+      weakColor = 'none';
+      }
+
+      if(this.eneAlive1 !== "No"){ // Check if we have Pet1 is alive or not.
            //Pet stats
-           var pATK = parseInt(this.petStats1["ATK"]);
-           var pMaxATK = pATK / 5;
-           var pDEX = parseInt(this.petStats1["DEX"]);
-           var pDEF = parseInt(this.petStats1["DEF"]);
-           var pMaxVIT = parseInt(this.petStats1["maxVIT"]);
-           var pCurVIT = parseInt(this.petStats1["curVIT"]);
-           var pColor = this.petStats1["color"];
+           var pDEX = parseInt(currentPet["DEX"]);
+           var pDEF = parseInt(currentPet["DEF"]);
+           var pMaxVIT = parseInt(currentPet["maxVIT"]);
+           var pCurVIT = parseInt(currentPet["curVIT"]);
+           var pColor = currentPet["color"];
 
            //Enemy stats
-           var eATK = parseInt(currentEnemy2["ATK"]);
+           var eATK = parseInt(currentEnemy["ATK"]);
            var eMaxATK = eATK / 5;
-           var eDEX = parseInt(currentEnemy2["DEX"]);
-           var eDEF = parseInt(currentEnemy2["DEF"]);
-           var eMaxVIT = parseInt(currentEnemy2["maxVIT"]);
-           var eCurVIT = parseInt(currentEnemy2["curVIT"]);
-           var eColor = parseInt(currentEnemy2["color"]);
+           var eDEX = parseInt(currentEnemy["DEX"]);
+           var eDEF = parseInt(currentEnemy["DEF"]);
+           var eMaxVIT = parseInt(currentEnemy["maxVIT"]);
+           var eCurVIT = parseInt(currentEnemy["curVIT"]);
+           var eColor = parseInt(currentEnemy["color"]);
 
            //Calculate damage
 	       var eneDMG = Math.ceil((Math.random() * eMaxATK) + eATK); //Return random number between ATK and ATK times 1.2
-           var eneDMGBonus = eneDMG * 1.5; // Add bonus damage based on color. In Future : Add ColorStrength stat to compare the enemy stat to whatever your pet's color is strong against.
-           var dmgDealt = eneDMGBonus - pDEF; // Reduce damage by enemy's defence.
+           if(eColor == weakColor){ // If target has a color disadvantage, deal bonus damage.
+           var eneDMGBonus = eneDMG * 1.5;  
+           var dmgDealt = Math.ceil(eneDMGBonus - pDEF); 
+           } else {
+           var dmgDealt = Math.ceil(eneDMG - pDEF); // Reduce damage by target's defence.
            // If the enemy has more defence than the amount of damage dealt, damage is set to 0.
+           }
            if(dmgDealt < 0){
               dmgDealt = 0; 
-            }
-
-           // Reduce pet health by dmgDealt
-           this.petStats1["curVIT"] = parseInt(this.petStats1["curVIT"]) - dmgDealt;
-
-           if(this.petStats1["curVIT"] <= 0){ // If the pet is at 0 health or less, he died.
-               //Kill enemy
-               //Remove enemy button
-               // Set public variable for button resets
-               // Replace sprite with dead sprite
-               // Phase 3 if he kills anyone but Pet2. If Pet2 dies, skip to Phase 4. Testfor Death at the start of every phase.
-               currentEnemy1["curVIT"] = 0;
-               this.petDeadCount++;
-             this.battlePhase3(currentEnemy1, currentEnemy2, currentEnemy3, movePet2, movePet3, targetMove2, targetMove3);
-           } else { //If not dead, move on to next phase
-             this.battlePhase3(currentEnemy1, currentEnemy2, currentEnemy3, movePet2, movePet3, targetMove2, targetMove3);
            }
+
+           // Reduce enemy health by dmgDealt
+           currentPet["curVIT"] = parseInt(currentPet["curVIT"]) - dmgDealt;
+
+           if(currentPet["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
+             // Skip the enemy's attack and it's now Pet2's turn, if he's alive
+             currentPet["curVIT"] = 0;
+             this.petDeadCount++;
+             if(targetMove == 1){
+             this.petAlive1 = "No";              
+             }else if(targetMove == 2){
+             this.petAlive2 = "No";              
+             }else if(targetMove == 3){
+             this.petAlive3 = "No";          
+             }
+             this.regularAttack(1, 'evil', 'ATK', targetMove, dmgDealt, 'dead'); 
+           } else {
+             this.regularAttack(1, 'evil', 'ATK', targetMove, dmgDealt, 'none'); 
+           }
+             setTimeout(() => {
+             this.petPhase2(); // Send to next phase whether dead or alive. Next phase will skip if necessary.
+              }, 1300);             
 
              setTimeout(() => {
            // Check which enemy was targeted, and update their picture and health.
-            if(targetMove1 == '1'){
-             document.getElementById("pokeView1").innerHTML = '<img id="pokeBattle1" src="../assets/combat/' + this.petStats1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP1"><h1>'+ this.petStats1["curVIT"] + ' / ' + this.petStats1["maxVIT"] +'</h1></div>';
-              
-            }else if(targetMove1 == '2'){
-             document.getElementById("pokeView2").innerHTML = '<img id="pokeBattle2" src="../assets/combat/' + this.petStats2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP2"><h1>'+ this.petStats2["curVIT"] + ' / ' + this.petStats2["maxVIT"] +'</h1></div>';
-
-            }else if(targetMove1 == '3'){
-             document.getElementById("pokeView3").innerHTML = '<img id="pokeBattle3" src="../assets/combat/' + this.petStats3["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP3"><h1>'+ this.petStats3["curVIT"] + ' / ' + this.petStats3["maxVIT"] +'</h1></div>'; 
+           if(currentPet["curVIT"] == 0){
+            document.getElementById("pokeView" + targetMove).innerHTML = '<img id="pokeBattle'+ targetMove +'" src="../assets/combat/' + currentPet["sprite"] + '.png" style="width: 70px; height: 70px; filter: grayscale(100%);" /><div id="petHP' + targetMove + '"><h1>'+ currentPet["curVIT"] + ' / ' + currentPet["maxVIT"] +'</h1></div>';
+            } else {
+            document.getElementById("pokeView" + targetMove).innerHTML = '<img id="pokeBattle'+ targetMove +'" src="../assets/combat/' + currentPet["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP' + targetMove +'"><h1>'+ currentPet["curVIT"] + ' / ' + currentPet["maxVIT"] +'</h1></div>';
             }
-          }, 300);
-        }
+           }, 150);
+      } else {
+      // If enemy1 is dead, skip to enemy2's turn.
+      this.enemyPhase2();
       }
+ }
 
   // Pet2's turn after Enemy1 went.
-  battlePhase3(currentEnemy1, currentEnemy2, currentEnemy3, movePet2, movePet3, targetMove2, targetMove3){
-   console.log("Phase 3");
-        if(this.petStats2 !== "None"){ // Check if we have Pet1 stats or not. If he has pet, determine type of attack.
-        if(movePet2 == "DEF"){
-            //Do something if he's defending
-        } else if(movePet2 == "ATK"){
+  petPhase2(){
+      var movePet = this.petTurns[1].substring(0, 3); // 2nd pet's move
+      var targetMove = this.petTurns[1].substring(3); // Who Pet2 is targetting
+
+      setTimeout(() => {
+      // Remove combat lines before moving to the next phase
+      var lineIMG = document.getElementById('bLine2') as HTMLImageElement;
+      lineIMG.src = '../assets/combat/linenone.png';
+      }, 150);
+
+      // If more than 1 enemy, change the value of currentEnemy (It's a different array/object structure)
+      if(this.enemyAmount > 1){
+      var currentEnemy = this.enemyStats["enemy" + targetMove]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
+      } else {
+      var currentEnemy = this.enemyStats;
+      }
+
+      var weakColor; // What color the target is weak to
+
+      //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
+      if(currentEnemy["color"] == "red"){
+      weakColor = 'blue';
+      } else if(currentEnemy["color"] == "green"){
+      weakColor = 'red';
+      } else if(currentEnemy["color"] == "blue"){
+      weakColor = 'green';
+      } else { // If purple or gold
+      weakColor = 'none';
+      }
+
+      // We need to use targetMove to determine WHICH ally pet to ASSIST
+
+      if(this.petAlive2 !== "No"){ // Check if we have Pet1 is alive or not.
+        if(movePet == "DEF"){
+            //Do something if he's assisting an ally
+             this.regularAttack(2, 'poke', movePet, targetMove, 0, 'none');
+                setTimeout(() => {
+                this.enemyPhase2();
+              }, 1500);             
+        } else if(movePet == "ATK"){ // Do something if he's attacking an enemy'
            //Pet stats
            var pATK = parseInt(this.petStats2["ATK"]);
            var pMaxATK = pATK / 5;
@@ -556,123 +901,196 @@ export class BattlePage {
            var pColor = this.petStats2["color"];
 
            //Enemy stats
-           var eDEX = parseInt(currentEnemy2["DEX"]);
-           var eDEF = parseInt(currentEnemy2["DEF"]);
-           var eMaxVIT = parseInt(currentEnemy2["maxVIT"]);
-           var eCurVIT = parseInt(currentEnemy2["curVIT"]);
-           var eColor = parseInt(currentEnemy2["color"]);
+           var eDEX = parseInt(currentEnemy["DEX"]);
+           var eDEF = parseInt(currentEnemy["DEF"]);
+           var eMaxVIT = parseInt(currentEnemy["maxVIT"]);
+           var eCurVIT = parseInt(currentEnemy["curVIT"]);
+           var eColor = parseInt(currentEnemy["color"]);
 
            //Calculate damage
-	       var petDMG = Math.ceil((Math.random() * pMaxATK) + pATK); //Return random number between ATK and ATK times 1.2
-           var petDMGBonus = petDMG * 1.5; // Add bonus damage based on color. In Future : Add ColorStrength stat to compare the enemy stat to whatever your pet's color is strong against.
-           var dmgDealt = petDMGBonus - eDEF; // Reduce damage by enemy's defence.
+           var petDMG = Math.ceil((Math.random() * pMaxATK) + pATK); //Return random number between ATK and ATK times 1.2
+           if(pColor == weakColor){ // If target has a color disadvantage, deal bonus damage.
+           var petDMGBonus = petDMG * 1.5;  
+           var dmgDealt = Math.ceil(petDMGBonus - eDEF); 
+           } else {
+           var dmgDealt = Math.ceil(petDMG - eDEF); // Reduce damage by enemy's defence.
            // If the enemy has more defence than the amount of damage dealt, damage is set to 0.
+           }
            if(dmgDealt < 0){
               dmgDealt = 0; 
            }
 
            // Reduce enemy health by dmgDealt
-           currentEnemy2["curVIT"] = parseInt(currentEnemy2["curVIT"]) - dmgDealt;
+           currentEnemy["curVIT"] = parseInt(currentEnemy["curVIT"]) - dmgDealt;
 
-           if(currentEnemy2["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
-               //Kill enemy
-               //Remove enemy button
-               // Set public variable for button resets
-               // Replace sprite with dead sprite
-               // Skip the enemy's attack and it's now Phase 3
-               currentEnemy2["curVIT"] = 0;
-               this.enemyDeadCount++;
-             this.battlePhase4(currentEnemy2, currentEnemy3, movePet3, targetMove2, targetMove3);
-           } else { //If not dead, move on to next phase
-             this.battlePhase4(currentEnemy2, currentEnemy3, movePet3, targetMove2, targetMove3);
+           if(currentEnemy["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
+             // Skip the enemy's attack and it's now Pet2's turn, if he's alive
+             currentEnemy["curVIT"] = 0;
+             this.enemyDeadCount++;
+             if(targetMove == 1){
+             this.eneAlive1 = "No";              
+             }else if(targetMove == 2){
+             this.eneAlive2 = "No";              
+             }else if(targetMove == 3){
+             this.eneAlive3 = "No";          
+             }
+             this.regularAttack(2, 'poke', movePet, targetMove, dmgDealt, 'dead');
+           } else {
+              this.regularAttack(2, 'poke', movePet, targetMove, dmgDealt, 'none');
            }
+             setTimeout(() => {
+             this.enemyPhase2(); // Send to next phase whether dead or alive. Next phase will skip if necessary.
+              }, 1300);             
 
              setTimeout(() => {
            // Check which enemy was targeted, and update their picture and health.
-            if(targetMove2 == '1'){
-             document.getElementById("evilView1").innerHTML = '<img id="evilBattle1" src="../assets/combat/' + currentEnemy2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP1"><h1>'+ currentEnemy2["curVIT"] + ' / ' + currentEnemy2["maxVIT"] +'</h1></div>';
-              
-            }else if(targetMove2 == '2'){
-             document.getElementById("evilView2").innerHTML = '<img id="evilBattle2" src="../assets/combat/' + currentEnemy2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP2"><h1>'+ currentEnemy2["curVIT"] + ' / ' + currentEnemy2["maxVIT"] +'</h1></div>';
-
-            }else if(targetMove2 == '3'){
-             document.getElementById("evilView3").innerHTML = '<img id="evilBattle3" src="../assets/combat/' + currentEnemy2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP3"><h1>'+ currentEnemy2["curVIT"] + ' / ' + currentEnemy2["maxVIT"] +'</h1></div>'; 
+           if(currentEnemy["curVIT"] == 0){
+            document.getElementById("evilView" + targetMove).innerHTML = '<img id="evilBattle'+ targetMove +'" src="../assets/combat/' + currentEnemy["sprite"] + '.png" style="width: 70px; height: 70px; filter: grayscale(100%);" /><div id="eneHP' + targetMove + '"><h1>'+ currentEnemy["curVIT"] + ' / ' + currentEnemy["maxVIT"] +'</h1></div>';
+            } else {
+            document.getElementById("evilView" + targetMove).innerHTML = '<img id="evilBattle'+ targetMove +'" src="../assets/combat/' + currentEnemy["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP' + targetMove + '"><h1>'+ currentEnemy["curVIT"] + ' / ' + currentEnemy["maxVIT"] +'</h1></div>';
             }
-          }, 300);
+          }, 150);
         }
+      } else {
+      // If Pet2 is dead, skip to Pet3's turn.
+      this.petPhase3();
       }
-  }
+ }
 
   // Enemy2's turn after Pet2 went.
-  battlePhase4(currentEnemy2, currentEnemy3, movePet3, targetMove2, targetMove3){
-   console.log("Phase 4");
-    var targetMove1 = '2';
-  
-        if(this.petStats1 !== "None"){ // Check if we have Pet1 stats or not. If he has pet, determine type of attack.
+  enemyPhase2(){
+      //AI will change the targetMove later on, and petStats1
+      var targetMove = 2;
+      var currentPet = this.petStats2;
 
+      // If more than 1 enemy, change the value of currentEnemy
+      if(this.enemyAmount > 1){
+      var currentEnemy = this.enemyStats["enemy1"]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
+      } else {
+      var currentEnemy = this.enemyStats;
+      }
+
+      var weakColor; // What color the target is weak to
+
+      //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
+      if(currentPet["color"] == "red"){
+      weakColor = 'blue';
+      } else if(currentPet["color"] == "green"){
+      weakColor = 'red';
+      } else if(currentPet["color"] == "blue"){
+      weakColor = 'green';
+      } else { // If purple or gold
+      weakColor = 'none';
+      }
+
+      if(this.eneAlive2 !== "No"){ // Check if we have Pet1 is alive or not.
            //Pet stats
-           var pDEX = parseInt(this.petStats2["DEX"]);
-           var pDEF = parseInt(this.petStats2["DEF"]);
-           var pMaxVIT = parseInt(this.petStats2["maxVIT"]);
-           var pCurVIT = parseInt(this.petStats2["curVIT"]);
-           var pColor = this.petStats2["color"];
+           var pDEX = parseInt(currentPet["DEX"]);
+           var pDEF = parseInt(currentPet["DEF"]);
+           var pMaxVIT = parseInt(currentPet["maxVIT"]);
+           var pCurVIT = parseInt(currentPet["curVIT"]);
+           var pColor = currentPet["color"];
 
            //Enemy stats
-           var eATK = parseInt(currentEnemy2["ATK"]);
+           var eATK = parseInt(currentEnemy["ATK"]);
            var eMaxATK = eATK / 5;
-           var eDEX = parseInt(currentEnemy2["DEX"]);
-           var eDEF = parseInt(currentEnemy2["DEF"]);
-           var eMaxVIT = parseInt(currentEnemy2["maxVIT"]);
-           var eCurVIT = parseInt(currentEnemy2["curVIT"]);
-           var eColor = parseInt(currentEnemy2["color"]);
+           var eDEX = parseInt(currentEnemy["DEX"]);
+           var eDEF = parseInt(currentEnemy["DEF"]);
+           var eMaxVIT = parseInt(currentEnemy["maxVIT"]);
+           var eCurVIT = parseInt(currentEnemy["curVIT"]);
+           var eColor = parseInt(currentEnemy["color"]);
 
            //Calculate damage
 	       var eneDMG = Math.ceil((Math.random() * eMaxATK) + eATK); //Return random number between ATK and ATK times 1.2
-           var eneDMGBonus = eneDMG * 1.5; // Add bonus damage based on color. In Future : Add ColorStrength stat to compare the enemy stat to whatever your pet's color is strong against.
-           var dmgDealt = eneDMGBonus - pDEF; // Reduce damage by enemy's defence.
+           if(eColor == weakColor){ // If target has a color disadvantage, deal bonus damage.
+           var eneDMGBonus = eneDMG * 1.5;  
+           var dmgDealt = Math.ceil(eneDMGBonus - pDEF); 
+           } else {
+           var dmgDealt = Math.ceil(eneDMG - pDEF); // Reduce damage by target's defence.
            // If the enemy has more defence than the amount of damage dealt, damage is set to 0.
+           }
            if(dmgDealt < 0){
               dmgDealt = 0; 
-            }
-
-           // Reduce pet health by dmgDealt
-           this.petStats2["curVIT"] = parseInt(this.petStats2["curVIT"]) - dmgDealt;
-
-           if(this.petStats2["curVIT"] <= 0){ // If the pet is at 0 health or less, he died.
-               //Kill enemy
-               //Remove enemy button
-               // Set public variable for button resets
-               // Replace sprite with dead sprite
-               // Phase 3 if he kills anyone but Pet2. If Pet2 dies, skip to Phase 4. Testfor Death at the start of every phase.
-               currentEnemy2["curVIT"] = 0;
-               this.petDeadCount++;
-             this.battlePhase5(currentEnemy3, movePet3, targetMove3);
-           } else { //If not dead, move on to next phase
-             this.battlePhase5(currentEnemy3, movePet3, targetMove3);
            }
+
+           // Reduce enemy health by dmgDealt
+           currentPet["curVIT"] = parseInt(currentPet["curVIT"]) - dmgDealt;
+
+           if(currentPet["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
+             // Skip the enemy's attack and it's now Pet2's turn, if he's alive
+             currentPet["curVIT"] = 0;
+             this.petDeadCount++;
+             if(targetMove == 1){
+             this.petAlive1 = "No";              
+             }else if(targetMove == 2){
+             this.petAlive2 = "No";              
+             }else if(targetMove == 3){
+             this.petAlive3 = "No";          
+             }
+            // Animate attacking the target. Pet/Enemy number (1,2,3), 'poke' or 'evil', 'ATK' or 'DEF', target number (1,2,3)
+            this.regularAttack(2, 'evil', 'ATK', targetMove, dmgDealt, 'dead'); 
+           } else {
+            this.regularAttack(2, 'evil', 'ATK', targetMove, dmgDealt, 'none'); 
+           }
+             setTimeout(() => {
+             this.petPhase3(); // Send to next phase whether dead or alive. Next phase will skip if necessary.
+              }, 1300);             
 
              setTimeout(() => {
            // Check which enemy was targeted, and update their picture and health.
-            if(targetMove1 == '1'){
-             document.getElementById("pokeView1").innerHTML = '<img id="pokeBattle1" src="../assets/combat/' + this.petStats1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP1"><h1>'+ this.petStats1["curVIT"] + ' / ' + this.petStats1["maxVIT"] +'</h1></div>';
-              
-            }else if(targetMove1 == '2'){
-             document.getElementById("pokeView2").innerHTML = '<img id="pokeBattle2" src="../assets/combat/' + this.petStats2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP2"><h1>'+ this.petStats2["curVIT"] + ' / ' + this.petStats2["maxVIT"] +'</h1></div>';
-
-            }else if(targetMove1 == '3'){
-             document.getElementById("pokeView3").innerHTML = '<img id="pokeBattle3" src="../assets/combat/' + this.petStats3["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP3"><h1>'+ this.petStats3["curVIT"] + ' / ' + this.petStats3["maxVIT"] +'</h1></div>'; 
-            }
-          }, 300);
-        }
+           if(currentPet["curVIT"] == 0){
+            document.getElementById("pokeView" + targetMove).innerHTML = '<img id="pokeBattle'+ targetMove +'" src="../assets/combat/' + currentPet["sprite"] + '.png" style="width: 70px; height: 70px; filter: grayscale(100%);" /><div id="petHP' + targetMove + '"><h1>'+ currentPet["curVIT"] + ' / ' + currentPet["maxVIT"] +'</h1></div>';
+            } else {
+            document.getElementById("pokeView" + targetMove).innerHTML = '<img id="pokeBattle'+ targetMove +'" src="../assets/combat/' + currentPet["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP' + targetMove +'"><h1>'+ currentPet["curVIT"] + ' / ' + currentPet["maxVIT"] +'</h1></div>';
+             }
+           }, 150);
+      } else {
+      // If enemy2 is dead, skip to enemy3's turn.
+      this.enemyPhase3();
+      }
   }
 
   // Pet3's turn after Enemy2 went.
-  battlePhase5(currentEnemy3, movePet3, targetMove3){
-   console.log("Phase 5");
-        if(this.petStats3 !== "None"){ // Check if we have Pet1 stats or not. If he has pet, determine type of attack.
-        if(movePet3 == "DEF"){
-            //Do something if he's defending
-        } else if(movePet3 == "ATK"){
+  petPhase3(){
+      var movePet = this.petTurns[2].substring(0, 3); // 3rd pet's move 
+      var targetMove = this.petTurns[2].substring(3); // Who Pet3 is targetting
+
+      setTimeout(() => {
+      // Remove combat lines before moving to the next phase
+      var lineIMG = document.getElementById('bLine3') as HTMLImageElement;
+      lineIMG.src = '../assets/combat/linenone.png';
+      }, 150);
+
+      // If more than 1 enemy, change the value of currentEnemy (It's a different array/object structure)
+      if(this.enemyAmount > 1){
+      var currentEnemy = this.enemyStats["enemy" + targetMove]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
+      } else {
+      var currentEnemy = this.enemyStats;
+      }
+
+      var weakColor; // What color the target is weak to
+
+      //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
+      if(currentEnemy["color"] == "red"){
+      weakColor = 'blue';
+      } else if(currentEnemy["color"] == "green"){
+      weakColor = 'red';
+      } else if(currentEnemy["color"] == "blue"){
+      weakColor = 'green';
+      } else { // If purple or gold
+      weakColor = 'none';
+      }
+
+      // We need to use targetMove to determine WHICH ally pet to ASSIST
+
+      if(this.petAlive3 !== "No"){ // Check if we have Pet1 is alive or not.
+        if(movePet == "DEF"){
+            //Do something if he's assisting an ally
+             this.regularAttack(3, 'poke', 'DEF', targetMove, 0, 'none');
+                setTimeout(() => {
+                this.enemyPhase3();
+              }, 1300);             
+        } else if(movePet == "ATK"){ // Do something if he's attacking an enemy'
            //Pet stats
            var pATK = parseInt(this.petStats3["ATK"]);
            var pMaxATK = pATK / 5;
@@ -683,114 +1101,154 @@ export class BattlePage {
            var pColor = this.petStats3["color"];
 
            //Enemy stats
-           var eDEX = parseInt(currentEnemy3["DEX"]);
-           var eDEF = parseInt(currentEnemy3["DEF"]);
-           var eMaxVIT = parseInt(currentEnemy3["maxVIT"]);
-           var eCurVIT = parseInt(currentEnemy3["curVIT"]);
-           var eColor = parseInt(currentEnemy3["color"]);
+           var eDEX = parseInt(currentEnemy["DEX"]);
+           var eDEF = parseInt(currentEnemy["DEF"]);
+           var eMaxVIT = parseInt(currentEnemy["maxVIT"]);
+           var eCurVIT = parseInt(currentEnemy["curVIT"]);
+           var eColor = parseInt(currentEnemy["color"]);
 
            //Calculate damage
-	       var petDMG = Math.ceil((Math.random() * pMaxATK) + pATK); //Return random number between ATK and ATK times 1.2
-           var petDMGBonus = petDMG * 1.5; // Add bonus damage based on color. In Future : Add ColorStrength stat to compare the enemy stat to whatever your pet's color is strong against.
-           var dmgDealt = petDMGBonus - eDEF; // Reduce damage by enemy's defence.
+           var petDMG = Math.ceil((Math.random() * pMaxATK) + pATK); //Return random number between ATK and ATK times 1.2
+           if(pColor == weakColor){ // If target has a color disadvantage, deal bonus damage.
+           var petDMGBonus = petDMG * 1.5;  
+           var dmgDealt = Math.ceil(petDMGBonus - eDEF); 
+           } else {
+           var dmgDealt = Math.ceil(petDMG - eDEF); // Reduce damage by enemy's defence.
            // If the enemy has more defence than the amount of damage dealt, damage is set to 0.
+           }
            if(dmgDealt < 0){
               dmgDealt = 0; 
            }
 
            // Reduce enemy health by dmgDealt
-           currentEnemy3["curVIT"] = parseInt(currentEnemy3["curVIT"]) - dmgDealt;
+           currentEnemy["curVIT"] = parseInt(currentEnemy["curVIT"]) - dmgDealt;
 
-           if(currentEnemy3["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
-               //Kill enemy
-               //Remove enemy button
-               // Set public variable for button resets
-               // Replace sprite with dead sprite
-               // Skip the enemy's attack and it's now Phase 3
-               currentEnemy3["curVIT"] = 0;
-               this.enemyDeadCount++;
-             this.battlePhaseFinal(currentEnemy3, targetMove3);
-           } else { //If not dead, move on to next phase
-             this.battlePhaseFinal(currentEnemy3, targetMove3);
+           if(currentEnemy["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
+             // Skip the enemy's attack and it's now Pet2's turn, if he's alive
+             currentEnemy["curVIT"] = 0;
+             this.enemyDeadCount++;
+             if(targetMove == 1){
+             this.eneAlive1 = "No";              
+             }else if(targetMove == 2){
+             this.eneAlive2 = "No";              
+             }else if(targetMove == 3){
+             this.eneAlive3 = "No";          
+             }
+           // Reduce phase amount by 1 since a participant died.
+             this.regularAttack(3, 'poke', movePet, targetMove, dmgDealt, 'dead');
+           } else {
+             this.regularAttack(3, 'poke', movePet, targetMove, dmgDealt, 'none'); 
            }
 
              setTimeout(() => {
-           // Check which enemy was targeted, and update their picture and health.
-            if(targetMove3 == '1'){
-             document.getElementById("evilView1").innerHTML = '<img id="evilBattle1" src="../assets/combat/' + currentEnemy3["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP1"><h1>'+ currentEnemy3["curVIT"] + ' / ' + currentEnemy3["maxVIT"] +'</h1></div>';
-              
-            }else if(targetMove3 == '2'){
-             document.getElementById("evilView2").innerHTML = '<img id="evilBattle2" src="../assets/combat/' + currentEnemy3["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP2"><h1>'+ currentEnemy3["curVIT"] + ' / ' + currentEnemy3["maxVIT"] +'</h1></div>';
+             this.enemyPhase3(); // Send to next phase whether dead or alive. Next phase will skip if necessary.
+              }, 1300);             
 
-            }else if(targetMove3 == '3'){
-             document.getElementById("evilView3").innerHTML = '<img id="evilBattle3" src="../assets/combat/' + currentEnemy3["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP3"><h1>'+ currentEnemy3["curVIT"] + ' / ' + currentEnemy3["maxVIT"] +'</h1></div>'; 
+             setTimeout(() => {
+           // Check which enemy was targeted, and update their picture and health.
+           if(currentEnemy["curVIT"] == 0){
+            document.getElementById("evilView" + targetMove).innerHTML = '<img id="evilBattle'+ targetMove +'" src="../assets/combat/' + currentEnemy["sprite"] + '.png" style="width: 70px; height: 70px; filter: grayscale(100%);" /><div id="eneHP' + targetMove + '"><h1>'+ currentEnemy["curVIT"] + ' / ' + currentEnemy["maxVIT"] +'</h1></div>';
+            } else {
+            document.getElementById("evilView" + targetMove).innerHTML = '<img id="evilBattle'+ targetMove +'" src="../assets/combat/' + currentEnemy["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="eneHP' + targetMove + '"><h1>'+ currentEnemy["curVIT"] + ' / ' + currentEnemy["maxVIT"] +'</h1></div>';
             }
-          }, 300);
+          }, 150);
         }
+      } else {
+      // If Pet3 is dead, skip to Enemy3's turn. Skip to enemyPhase3
+      this.enemyPhase3();
       }
   }
 
   // Enemy3's turn after Pet3 went. Final turn of the fight before resetting the buttons.
-  battlePhaseFinal(currentEnemy3, targetMove3){
-   console.log("Final Phase");
-    var targetMove1 = '3';
-  
-        if(this.petStats1 !== "None"){ // Check if we have Pet1 stats or not. If he has pet, determine type of attack.
+  enemyPhase3(){
+      //AI will change the targetMove later on, and petStats1
+      var targetMove = 3;
+      var currentPet = this.petStats3;
 
+      var weakColor; // What color the target is weak to
+
+      //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
+      if(currentPet["color"] == "red"){
+      weakColor = 'blue';
+      } else if(currentPet["color"] == "green"){
+      weakColor = 'red';
+      } else if(currentPet["color"] == "blue"){
+      weakColor = 'green';
+      } else { // If purple or gold
+      weakColor = 'none';
+      }
+
+      // If more than 1 enemy, change the value of currentEnemy
+      if(this.enemyAmount > 1){
+      var currentEnemy = this.enemyStats["enemy1"]; // Get the stats and info of the target. Only accessed if movePet is ATK.      
+      } else {
+      var currentEnemy = this.enemyStats;
+      }
+
+      if(this.eneAlive3 !== "No"){ // Check if we have Pet1 is alive or not.
            //Pet stats
-           var pDEX = parseInt(this.petStats3["DEX"]);
-           var pDEF = parseInt(this.petStats3["DEF"]);
-           var pMaxVIT = parseInt(this.petStats3["maxVIT"]);
-           var pCurVIT = parseInt(this.petStats3["curVIT"]);
-           var pColor = this.petStats3["color"];
+           var pDEX = parseInt(currentPet["DEX"]);
+           var pDEF = parseInt(currentPet["DEF"]);
+           var pMaxVIT = parseInt(currentPet["maxVIT"]);
+           var pCurVIT = parseInt(currentPet["curVIT"]);
+           var pColor = currentPet["color"];
 
            //Enemy stats
-           var eATK = parseInt(currentEnemy3["ATK"]);
+           var eATK = parseInt(currentEnemy["ATK"]);
            var eMaxATK = eATK / 5;
-           var eDEX = parseInt(currentEnemy3["DEX"]);
-           var eDEF = parseInt(currentEnemy3["DEF"]);
-           var eMaxVIT = parseInt(currentEnemy3["maxVIT"]);
-           var eCurVIT = parseInt(currentEnemy3["curVIT"]);
-           var eColor = parseInt(currentEnemy3["color"]);
+           var eDEX = parseInt(currentEnemy["DEX"]);
+           var eDEF = parseInt(currentEnemy["DEF"]);
+           var eMaxVIT = parseInt(currentEnemy["maxVIT"]);
+           var eCurVIT = parseInt(currentEnemy["curVIT"]);
+           var eColor = parseInt(currentEnemy["color"]);
 
            //Calculate damage
 	       var eneDMG = Math.ceil((Math.random() * eMaxATK) + eATK); //Return random number between ATK and ATK times 1.2
-           var eneDMGBonus = eneDMG * 1.5; // Add bonus damage based on color. In Future : Add ColorStrength stat to compare the enemy stat to whatever your pet's color is strong against.
-           var dmgDealt = eneDMGBonus - pDEF; // Reduce damage by enemy's defence.
+           if(eColor == weakColor){ // If target has a color disadvantage, deal bonus damage.
+           var eneDMGBonus = eneDMG * 1.5;  
+           var dmgDealt = Math.ceil(eneDMGBonus - pDEF); 
+           } else {
+           var dmgDealt = Math.ceil(eneDMG - pDEF); // Reduce damage by target's defence.
            // If the enemy has more defence than the amount of damage dealt, damage is set to 0.
+           }
            if(dmgDealt < 0){
               dmgDealt = 0; 
-            }
-
-           // Reduce pet health by dmgDealt
-           this.petStats3["curVIT"] = parseInt(this.petStats3["curVIT"]) - dmgDealt;
-
-           if(this.petStats3["curVIT"] <= 0){ // If the pet is at 0 health or less, he died.
-               //Kill enemy
-               //Remove enemy button
-               // Set public variable for button resets
-               // Replace sprite with dead sprite
-               // Phase 3 if he kills anyone but Pet2. If Pet2 dies, skip to Phase 4. Testfor Death at the start of every phase.
-               currentEnemy3["curVIT"] = 0;
-               this.petDeadCount++;
-
-            this.resetTargets()
-           } else { //If not dead, move on to next phase
-             this.resetTargets();
            }
+
+           // Reduce enemy health by dmgDealt
+           currentPet["curVIT"] = parseInt(currentPet["curVIT"]) - dmgDealt;
+
+           if(currentPet["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
+             // Skip the enemy's attack and it's now Pet2's turn, if he's alive
+             currentPet["curVIT"] = 0;
+             this.petDeadCount++;
+             if(targetMove == 1){
+             this.petAlive1 = "No";              
+             }else if(targetMove == 2){
+             this.petAlive2 = "No";              
+             }else if(targetMove == 3){
+             this.petAlive3 = "No";          
+             }
+             this.regularAttack(3, 'evil', 'ATK', targetMove, dmgDealt, 'dead');
+             } else {
+               this.regularAttack(3, 'evil', 'ATK', targetMove, dmgDealt, 'none');
+             }
+
+             setTimeout(() => {
+              this.resetTargets(); // Send to next phase whether dead or alive. Next phase will skip if necessary.
+              }, 1300);             
 
              setTimeout(() => {
            // Check which enemy was targeted, and update their picture and health.
-            if(targetMove1 == '1'){
-             document.getElementById("pokeView1").innerHTML = '<img id="pokeBattle1" src="../assets/combat/' + this.petStats1["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP1"><h1>'+ this.petStats1["curVIT"] + ' / ' + this.petStats1["maxVIT"] +'</h1></div>';
-              
-            }else if(targetMove1 == '2'){
-             document.getElementById("pokeView2").innerHTML = '<img id="pokeBattle2" src="../assets/combat/' + this.petStats2["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP2"><h1>'+ this.petStats2["curVIT"] + ' / ' + this.petStats2["maxVIT"] +'</h1></div>';
-
-            }else if(targetMove1 == '3'){
-             document.getElementById("pokeView3").innerHTML = '<img id="pokeBattle3" src="../assets/combat/' + this.petStats3["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP3"><h1>'+ this.petStats3["curVIT"] + ' / ' + this.petStats3["maxVIT"] +'</h1></div>'; 
+           if(currentPet["curVIT"] == 0){
+            document.getElementById("pokeView" + targetMove).innerHTML = '<img id="pokeBattle'+ targetMove +'" src="../assets/combat/' + currentPet["sprite"] + '.png" style="width: 70px; height: 70px; filter: grayscale(100%)" /><div id="eneHP' + targetMove + '"><h1>'+ currentPet["curVIT"] + ' / ' + currentPet["maxVIT"] +'</h1></div>';
+            } else {
+            document.getElementById("pokeView" + targetMove).innerHTML = '<img id="pokeBattle'+ targetMove +'" src="../assets/combat/' + currentPet["sprite"] + '.png" style="width: 70px; height: 70px;" /><div id="petHP' + targetMove +'"><h1>'+ currentPet["curVIT"] + ' / ' + currentPet["maxVIT"] +'</h1></div>';
             }
-          }, 300);
-        }
+           }, 150);
+      } else {
+      // If enemy3 is dead, end fight.
+      this.resetTargets();
+      }
   }
 }

@@ -61,7 +61,7 @@ export class ExplorePage {
       } else {
       document.getElementById("MissionInfoDivMini").innerHTML = '<h1 id="whitetext" style="font-size:20px; text-align:center;">Mission ' + level + '</div><br><br><img id="loot" src="../assets/items/' + this.planetName + level + '.png" style="width: 110px; height: 34px;" />';  
       }
-     }, 80);   
+     }, 20);   
   }
 
   // Change planet and start the battle
