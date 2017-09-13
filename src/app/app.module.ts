@@ -15,6 +15,9 @@ import { ViewpetonePage } from '../pages/viewpetone/viewpetone';
 import { BattlePage } from '../pages/battle/battle';
 import { ExplorePage } from '../pages/explore/explore';
 
+import { HangartempPage } from '../pages/hangartemp/hangartemp';
+import { BattletempPage } from '../pages/battletemp/battletemp';
+import { ExploretempPage } from '../pages/exploretemp/exploretemp';
 
 @NgModule({
   declarations: [
@@ -25,7 +28,10 @@ import { ExplorePage } from '../pages/explore/explore';
     HangarPage,
     ViewpetonePage,
     BattlePage,
-    ExplorePage
+    ExplorePage,
+    HangartempPage,
+    BattletempPage,
+    ExploretempPage
   ],
   imports: [
     BrowserModule,
@@ -41,7 +47,10 @@ import { ExplorePage } from '../pages/explore/explore';
     HangarPage,
     ViewpetonePage,
     BattlePage,
-    ExplorePage
+    ExplorePage,
+    HangartempPage,
+    BattletempPage,
+    ExploretempPage
   ],
   providers: [
     StatusBar,

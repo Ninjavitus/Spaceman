@@ -1,13 +1,12 @@
 ﻿import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { HangarPage } from '../hangar/hangar';
-import { BattletempPage } from '../battletemp/battletemp';
-import { HangartempPage } from '../hangartemp/hangartemp';
-import { ExploretempPage } from '../exploretemp/exploretemp';
-import { IonicPage, ModalController, NavController, NavParams } from 'ionic-angular';
+import { BattlePage } from '../battle/battle';
+import { ExplorePage } from '../explore/explore';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 /**
- * Generated class for the BattlePage page.
+ * Generated class for the BattletempPage page.
  *
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
@@ -15,12 +14,12 @@ import { IonicPage, ModalController, NavController, NavParams } from 'ionic-angu
 
 @IonicPage()
 @Component({
-  selector: 'page-battle',
-  templateUrl: 'battle.html',
+  selector: 'page-battletemp',
+  templateUrl: 'battletemp.html',
 })
-export class BattlePage {
+export class BattletempPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage) {
   }
 
   public petTarget: number = 1; // Goes up every time a pet completes an action. If petTarget == 1 then Pet1's turn, if 2 then pet2, etc.
@@ -142,7 +141,8 @@ public onButtonClick(target) {
 
    this.partySprites();
    this.planetEnemies(planet, level);
-   }, 80);  
+   console.log("Did load");
+   }, 1000);  
   }
 
   // Animate test
@@ -343,25 +343,22 @@ public onButtonClick(target) {
   nextMission(){
   var planets = this.navParams.get('planet');
   var levels = parseInt(this.navParams.get('level')) + 1;
-  let nextMission = this.modalCtrl.create(BattletempPage, {planet: planets, level: levels});
-   nextMission.present(); 
+  this.navCtrl.push(BattlePage, {planet: planets, level: levels});  
   }
 
   repeatMission(){
   var planets = this.navParams.get('planet');
   var levels = this.navParams.get('level');
-  let repeatMission = this.modalCtrl.create(BattletempPage, {planet: planets, level: levels});
-   repeatMission.present();
+  this.navCtrl.push(BattlePage, {planet: planets, level: levels});
   }
 
   backToHangar(){
-  let exploreHangar = this.modalCtrl.create(HangarPage);
-   exploreHangar.present();
+  this.navCtrl.push(HangarPage);
   }
 
-  // Send them to a temp page, otherwise it gives us a bunch of issues
+  // Send them to the regular page since this is a temp page
   backToExplore(){
-  this.navCtrl.pop();
+  this.navCtrl.push(ExplorePage);
   }
 
   // Sets the sprites of your pet party

@@ -8,16 +8,16 @@
 </ion-header>
 <ion-content id="battlemain">
 <div ion-fixed style="width:100%; height:100%">
-<div *ngIf="victoryScreen" id="expScreen"><button ion-button id="hangar" (click)="backToExplore();">EXPLORE MORE</button><font face="BebasNeue"><h1 id="VictoryTxt">Victory!</h1><p id="missionTxt">Mission 10 complete!</p><p id="expGainedTxt">365 EXP Gained</p></font>
+<div *ngIf="victoryScreen" id="expScreen"><button ion-button id="hangar" (click)="backToExplore();">BACK TO HANGAR</button><font face="BebasNeue"><h1 id="VictoryTxt">Victory!</h1><p id="missionTxt">Mission 10 complete!</p><p id="expGainedTxt">365 EXP Gained</p></font>
 <div id="expBarAll">
 <div *ngIf="!expPet1" id="expPet1"><img id="expImg1" src="../assets/hangar/1.png" style="width: 70px; height: 70px;" /><div id="expBar1"><div id="expAmount1"></div></div></div>
 <div *ngIf="!expPet2" id="expPet2"><img id="expImg2" src="../assets/hangar/2.png" style="width: 70px; height: 70px;" /><div id="expBar2"><div id="expAmount2"></div></div></div>
 <div *ngIf="!expPet3" id="expPet3"><img id="expImg3" src="../assets/hangar/3.png" style="width: 70px; height: 70px;" /><div id="expBar3"><div id="expAmount3"></div></div></div>
 </div>
 <div id="vicLoot"></div>
-<!--<button ion-button id="next" color="danger" (click)="repeatMission();">REPEAT MISSION</button>
-<button ion-button id="repeat" color="secondary" (click)="nextMission();">NEXT MISSION</button>
-<button ion-button id="explore" (click)="backToHangar();">EXPLORE MORE</button>-->
+<button ion-button id="repeat" color="danger" (click)="nextMission();">REPEAT MISSION</button>
+<button ion-button id="next" color="secondary" (click)="repeatMission();">NEXT MISSION</button>
+<button ion-button id="explore" (click)="backToHangar();">EXPLORE MORE</button>
 <div 
 </div>
 <div *ngIf="defeatScreen" id="expScreen"></div>
