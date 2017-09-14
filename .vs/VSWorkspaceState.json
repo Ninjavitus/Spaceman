@@ -5,12 +5,12 @@
     "\\src\\app",
     "\\src\\pages",
     "\\src\\pages\\battle",
+    "\\src\\pages\\battletemp",
     "\\src\\pages\\explore",
+    "\\src\\pages\\exploretemp",
     "\\src\\pages\\hangar",
-    "\\src\\pages\\home",
-    "\\src\\pages\\newgamepet",
     "\\src\\pages\\viewpetone"
   ],
-  "SelectedNode": "\\src\\pages\\viewpetone\\viewpetone.ts",
+  "SelectedNode": "\\src\\pages\\battle\\battle.ts",
   "PreviewInSolutionExplorer": false
 }

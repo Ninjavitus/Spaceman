@@ -73,32 +73,37 @@ export class ViewpetonePage {
    }
 
   switchToHangar() {
-    this.navCtrl.push(HangarPage);
+    this.navCtrl.pop();
   }
 
   ionViewDidLoad() {
+  //Check if we have pets, to see how many slides to generate
+  this.storage.get('PilotInfo').then((data) => {
+  var profileInfo = JSON.parse(data); 
+
+  if(profileInfo["Pet1"] = "Yes"){
   setTimeout(() => {
+  this.petSlide1();
+  }, 100); 
+  }
+
+  if(profileInfo["Pet2"] = "Yes"){
+  setTimeout(() => {
+  this.petSlide2();
+  }, 100); 
+  }
+
+  if(profileInfo["Pet3"] = "Yes"){
+  setTimeout(() => {
+  this.petSlide3();
+  }, 100); 
+  }
+ });
+}
+
+petSlide1() {
   // Open pilot1 stats to get name and stuff
   this.storage.get('PetOneInfo').then((data) => {
-
-  /* All stats and placeholder values listed out here. All values are strings.
-  name: pilot, 
-  gender: F/M, 
-  sprite: ".png", 
-  LVL: "1", 
-  curEXP: "0", maxEXP: "50", 
-  curVIT: "10", maxVIT: "10", 
-  ATK: "8", 
-  DEF: "6", 
-  SPD: "6", 
-  color: "red", 
-  WEPS: "none", 
-  
-  curHUNGER: "8", maxHUNGER: "8", 
-  curTHIRST: "6", maxTHIRST: "6", 
-  status: "normal", 
-  likes: "steaks", dislikes: "shrooms", 
-  hobby: "napping" */
 
   // Turn pet info into array for stats
   var pet = JSON.parse(data);
@@ -112,7 +117,7 @@ export class ViewpetonePage {
 
   // Calculate EXP percentage based on current and max EXP
   var petEXP = (parseInt(pet["curEXP"])) / (parseInt(pet["maxEXP"]));
-  var petEXPercentMath = (petEXP * 100);
+  var petEXPercentMath = Math.ceil((petEXP * 100));
   var petEXPercent = petEXPercentMath.toString() + "%";
   var petEXPValue = pet["curEXP"] + " / " + pet["maxEXP"];
 
@@ -148,9 +153,118 @@ export class ViewpetonePage {
   var petImage = document.getElementById("pilotSprite") as HTMLImageElement;
   petImage.src = '../assets/pets/'+ pet["sprite"] + '.png';
 
-    });
-  }, 400);   
- }
+    });  
+}
+
+petSlide2() {
+  // Open pilot1 stats to get name and stuff
+  this.storage.get('PetTwoInfo').then((data) => {
+
+  // Turn pet info into array for stats
+  var pet = JSON.parse(data);
+
+  var petName = pet["name"].toUpperCase(); //name
+
+  // Calculate HP percentage based on current and max HP
+  var petHP = (parseInt(pet["curVIT"])) / (parseInt(pet["maxVIT"]));
+  var petPercentMath = (petHP * 100);
+  var petPercent = petPercentMath.toString() + "%";
+
+  // Calculate EXP percentage based on current and max EXP
+  var petEXP = (parseInt(pet["curEXP"])) / (parseInt(pet["maxEXP"]));
+  var petEXPercentMath = Math.ceil((petEXP * 100));
+  var petEXPercent = petEXPercentMath.toString() + "%";
+  var petEXPValue = pet["curEXP"] + " / " + pet["maxEXP"];
+
+  // Used to create multiple <p>'s for ATK, DEF, etc.
+  var petVIT = '<p id="pilotPageStats"><font color="#FF0000"><b>VIT</b></font> ' + pet["curVIT"] + '/' + pet["maxVIT"] + '</p><br>';
+  var petATK = '<p id="pilotPageStats"><font color="#FFCC00"><b>ATK</b>&nbsp;&nbsp;&nbsp;</font>' + pet["ATK"] + '</p><br>';
+  var petDEF = '<p id="pilotPageStats"><font color="#00cd00"><b>DEF</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEF"] + '</p><br>';
+  var petDEX = '<p id="pilotPageStats"><font color="#007FFF"><b>SPD</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEX"] + '</p><br>';
+  var petLVL = '<p id="pilotPageStats"><b>LEVEL</b>&nbsp;&nbsp;' + pet["LVL"] + '</p><br>';
+  //var pilotEnergy = '<br><p id="pilotPageStats">' + pet["LVL"] + '</p><br>';
+
+  // Set pet likes/dislikes & hobbies
+  var petHunger = '<p id="pilotPageRight">' + pet["curHUNGER"] + ' / ' + pet["maxHUNGER"] + '</p><br>';
+  var petThirst = '<p id="pilotPageRight">' + pet["curTHIRST"] + ' / ' + pet["maxTHIRST"] + '</p><br>'; // Used as Energy for now
+  var petLikes = '<br><p id="pilotPageRight">' + pet["likes"] + '</p><br>';
+  var petDislikes = '<p id="pilotPageRight">' + pet["dislikes"] + '</p><br>'; 
+  var petHobby = '<p id="pilotPageRight">' + pet["hobby"] + '</p><br>'; 
+
+  //Player name and level
+  document.getElementById("whitetext2").innerText = petName;
+
+  // Set player stats on page
+  document.getElementById("pilotStatsDiv2").innerHTML = petLVL + petVIT + petATK + petDEF + petDEX;
+  document.getElementById("pilotRightStatsDiv2").innerHTML = petHunger + petThirst + petLikes + petDislikes + petHobby;
+
+  // Adjust div width based on EXP %
+  document.getElementById("expDiv2").innerHTML = '<div id="experienceBar" style="text-align:center; width:' + petEXPercent + ';"></div><p id="exptxt" style="font-size:10px; color:#FFFFFF; text-align:center;">' + petEXPValue + '&nbsp;&nbsp;(' + petEXPercent + ')</p>';
+
+  // Set player color and weapon type
+  document.getElementById("pilotColor2").innerHTML = '<img id="colorBadge" src="../assets/combat/' + pet["color"] + '.png" style="width: 64px; height: 64px;"/>';
+
+  // Set pett's image
+  var petImage = document.getElementById("pilotSprite2") as HTMLImageElement;
+  petImage.src = '../assets/pets/'+ pet["sprite"] + '.png';
+
+    });  
+}
+
+petSlide3() {
+  // Open pilot1 stats to get name and stuff
+  this.storage.get('PetThreeInfo').then((data) => {
+
+  // Turn pet info into array for stats
+  var pet = JSON.parse(data);
+
+  var petName = pet["name"].toUpperCase(); //name
+
+  // Calculate HP percentage based on current and max HP
+  var petHP = (parseInt(pet["curVIT"])) / (parseInt(pet["maxVIT"]));
+  var petPercentMath = (petHP * 100);
+  var petPercent = petPercentMath.toString() + "%";
+
+  // Calculate EXP percentage based on current and max EXP
+  var petEXP = (parseInt(pet["curEXP"])) / (parseInt(pet["maxEXP"]));
+  var petEXPercentMath = Math.ceil((petEXP * 100));
+  var petEXPercent = petEXPercentMath.toString() + "%";
+  var petEXPValue = pet["curEXP"] + " / " + pet["maxEXP"];
+
+  // Used to create multiple <p>'s for ATK, DEF, etc.
+  var petVIT = '<p id="pilotPageStats"><font color="#FF0000"><b>VIT</b></font> ' + pet["curVIT"] + '/' + pet["maxVIT"] + '</p><br>';
+  var petATK = '<p id="pilotPageStats"><font color="#FFCC00"><b>ATK</b>&nbsp;&nbsp;&nbsp;</font>' + pet["ATK"] + '</p><br>';
+  var petDEF = '<p id="pilotPageStats"><font color="#00cd00"><b>DEF</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEF"] + '</p><br>';
+  var petDEX = '<p id="pilotPageStats"><font color="#007FFF"><b>SPD</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEX"] + '</p><br>';
+  var petLVL = '<p id="pilotPageStats"><b>LEVEL</b>&nbsp;&nbsp;' + pet["LVL"] + '</p><br>';
+  //var pilotEnergy = '<br><p id="pilotPageStats">' + pet["LVL"] + '</p><br>';
+
+  // Set pet likes/dislikes & hobbies
+  var petHunger = '<p id="pilotPageRight">' + pet["curHUNGER"] + ' / ' + pet["maxHUNGER"] + '</p><br>';
+  var petThirst = '<p id="pilotPageRight">' + pet["curTHIRST"] + ' / ' + pet["maxTHIRST"] + '</p><br>'; // Used as Energy for now
+  var petLikes = '<br><p id="pilotPageRight">' + pet["likes"] + '</p><br>';
+  var petDislikes = '<p id="pilotPageRight">' + pet["dislikes"] + '</p><br>'; 
+  var petHobby = '<p id="pilotPageRight">' + pet["hobby"] + '</p><br>'; 
+
+  //Player name and level
+  document.getElementById("whitetext3").innerText = petName;
+
+  // Set player stats on page
+  document.getElementById("pilotStatsDiv3").innerHTML = petLVL + petVIT + petATK + petDEF + petDEX;
+  document.getElementById("pilotRightStatsDiv3").innerHTML = petHunger + petThirst + petLikes + petDislikes + petHobby;
+
+  // Adjust div width based on EXP %
+  document.getElementById("expDiv3").innerHTML = '<div id="experienceBar" style="text-align:center; width:' + petEXPercent + ';"></div><p id="exptxt" style="font-size:10px; color:#FFFFFF; text-align:center;">' + petEXPValue + '&nbsp;&nbsp;(' + petEXPercent + ')</p>';
+
+  // Set player color and weapon type
+  document.getElementById("pilotColor3").innerHTML = '<img id="colorBadge" src="../assets/combat/' + pet["color"] + '.png" style="width: 64px; height: 64px;"/>';
+
+  // Set pett's image
+  var petImage = document.getElementById("pilotSprite3") as HTMLImageElement;
+  petImage.src = '../assets/pets/'+ pet["sprite"] + '.png';
+
+    }); 
+}
 
 ionViewWillLeave() {
 // Update energy on page leave

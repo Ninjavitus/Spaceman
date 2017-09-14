@@ -142,6 +142,11 @@ export class HangarPage {
    exploreCity.present();
   }
 
+  viewPetPage() {
+    let viewPets = this.modalCtrl.create(ViewpetonePage);
+   viewPets.present(); 
+  }
+
   addPet(){
   this.storage.get('PilotInfo').then((data) => {
   

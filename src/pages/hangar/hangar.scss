@@ -4,28 +4,3 @@
   height:2%;
   border: 4px solid #000000;
 }
-
-#MenuB1 {
-left: 20%;
-}
-
-#MenuB2 {
-left: 20%;
-}
-
-#MenuB3 {
-left:90%;
-}
-
-#MenuB4 {
-top: 30%;
-left:70%;
-}
-
-#MenuB1, #MenuB2, #MenuB3, #MenuB4 {
-position: absolute;
-box-shadow: 1px 1px 2px #000000;
-width: 50px;
-height: 50px;
-z-index: 18;
-}

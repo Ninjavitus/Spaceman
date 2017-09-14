@@ -44,7 +44,7 @@ zoom: 110%;
   src: url('../assets/font/BebasNeue.otf')
 }
 
-#whitetext {
+#whitetext, #whitetext2, #whitetext3 {
   color: #FFFFFF;
 }
 
@@ -289,7 +289,7 @@ filter: none;
 -ms-filter: blur(0px);
 filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='0');
 image-rendering: -moz-crisp-edges;
-top: 71%;
+top: 67%;
 right: 5%;
 z-index: 2;
 }
@@ -301,7 +301,7 @@ filter: none;
 -moz-filter: blur(0px); 
 -ms-filter: blur(0px);
 filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='0');
-top: 83%;
+top: 75%;
 z-index: 3;
 }
 
@@ -312,7 +312,7 @@ filter: none;
 -moz-filter: blur(0px); 
 -ms-filter: blur(0px);
 filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='0');
-top: 76%;
+top: 71%;
 left: 11%;
 z-index: 4;
 }
@@ -492,25 +492,25 @@ filter: grayscale(0%);
   z-index: 1;
 }
 
-#expDiv {
+#expDiv, #expDiv2, #expDiv3 {
 width:100%;
 background-color: rgba(0, 0, 0, 0.75);
 }
 
-#colorBadge {
+#colorBadge, #colorBadge2, #colorBadge3 {
  position: absolute;
  margin-top: -134px;
  margin-left: -146px;
  z-index: 4;
 }
 
-#pilotStatsDiv {
+#pilotStatsDiv, #pilotStatsDiv2, #pilotStatsDiv3 {
 margin-left: 4%;
 width:100%;
 height:100%;
 }
 
-#pilotRightStatsDiv {
+#pilotRightStatsDiv, #pilotRightStatsDiv2, #pilotRightStatsDiv3 {
 margin-left: 74%;
 margin-top: -13%;
 width:100%;
@@ -552,4 +552,64 @@ width:auto;
 height:auto;
 max-height:100%;
 max-width:100%;
+}
+
+#bottomMenu {
+position: absolute;
+background-color: rgba(0, 0, 0, 0.45);
+width: 100%;
+height: 10.5%;
+top: 85%;
+}
+
+#MenuB1 {
+left: 3%;
+}
+
+#MenuB2 {
+left: 23%;
+}
+
+#MenuB3 {
+left:42%;
+}
+
+#MenuB4 {
+left:61%;
+}
+
+#MenuB5 {
+left:80%;
+}
+
+#MenuT1 {
+top: 2%;
+left:3%;
+}
+
+#MenuT2 {
+left: 3%;
+top: 13%;
+}
+
+#MenuT3 {
+top: 2%;
+left:80%;
+}
+
+#MenuB1, #MenuB2, #MenuB3, #MenuB4, #MenuB5 {
+position: absolute;
+box-shadow: 1px 1px 2px #000000;
+top: 85%;
+width: 50px;
+height: 50px;
+z-index: 18;
+}
+
+#MenuT1, #MenuT2, #MenuT3 {
+position: absolute;
+box-shadow: 1px 1px 2px #000000;
+width: 50px;
+height: 50px;
+z-index: 18;
 }

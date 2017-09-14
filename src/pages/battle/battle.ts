@@ -30,6 +30,8 @@ export class BattlePage {
   public phaseAmount: number = 0; // Checks how many enemies and pets are alive to determine the amount of phases.
   public enemyStats: any; // Saves enemy stats on page load
 
+  public expTotal: number = 0; //Used to calculate total EXP
+
   public petStats1: any = "None"; // Saves allied pet stats on page load
   public petStats2: any = "None";
   public petStats3: any = "None";
@@ -416,30 +418,30 @@ public onButtonClick(target) {
    // Predetermined monsters for every level. Can find RNG and goodies (loot) when venturing into the Wilderness
    // AB = Ability 1,2,3. L1,2,3,4,5 = Loot 1 to 5. 1 common, 5 super rare. 
    // Determine base stats for all enemies found on this planet, then generate new instances of the enemies (with their stats scaling with lvl)
-   var level1 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
-   var level2 = { amount: "1", name: "MUDKIPS", sprite: "3", LVL: "1", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "blue", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
-   var level3 = { amount: "1", name: "PLUSLE", sprite: "5", LVL: "1", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "gold", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
-   var level4 = { amount: "1", name: "UMBREON", sprite: "6", LVL: "1", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "red", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
+   var level1 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", EXP: "10", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
+   var level2 = { amount: "1", name: "MUDKIPS", sprite: "3", LVL: "1", EXP: "10", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "blue", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
+   var level3 = { amount: "1", name: "PLUSLE", sprite: "5", LVL: "1", EXP: "10", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "gold", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
+   var level4 = { amount: "1", name: "UMBREON", sprite: "6", LVL: "1", EXP: "10", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "red", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
 
    // New stats = Base Stats * (Level / 2)
-   var level5 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
-   var level6 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
-   var level7 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
-   var level8 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
+   var level5 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", EXP: "10", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
+   var level6 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", EXP: "10", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
+   var level7 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", EXP: "10", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
+   var level8 = { amount: "1", name: "POLIWHIRL", sprite: "4", LVL: "1", EXP: "10", curVIT: "8", maxVIT: "8", ATK: "4", DEF: "3", DEX: "3", FTH: "1", color: "purple", PROF: "none", AB1: "", AB2: "", AB3: "", L1: "", L2: "", L3: "", L4: "", L5: ""};
  
    // If multiple enemies we need to nest the objects/arrays. Amount determines how many enemies in the object
    var level9 = {
                    amount: "2",
-                   enemy1 : { 'name': "POLIWHIRL", 'sprite': "4", 'LVL': "1", 'curVIT': "8", 'maxVIT': "8", 'ATK': "4", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
-                   enemy2 : { 'name': "UMBREON", 'sprite': "6", 'LVL': "1", 'curVIT': "8", 'maxVIT': "8", 'ATK': "4", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""}
+                   enemy1 : { 'name': "POLIWHIRL", 'sprite': "4", 'LVL': "1", 'EXP': "10", 'curVIT': "8", 'maxVIT': "8", 'ATK': "4", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
+                   enemy2 : { 'name': "UMBREON", 'sprite': "6", 'LVL': "1", 'EXP': "10", 'curVIT': "8", 'maxVIT': "8", 'ATK': "4", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""}
                       };
 
    // If multiple enemies we need to nest the objects/arrays. Amount determines how many enemies in the object
    var level10 = {
                    amount: "3",
-                   enemy1 : { 'name': "POLIWHIRL", 'sprite': "4", 'LVL': "1", 'curVIT': "15", 'maxVIT': "15", 'ATK': "8", 'DEF': "5", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
-                   enemy2 : { 'name': "UMBREON", 'sprite': "6", 'LVL': "1", 'curVIT': "15", 'maxVIT': "15", 'ATK': "8", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
-                   enemy3 : { 'name': "MUDKIPS", 'sprite': "3", 'LVL': "1", 'curVIT': "15", 'maxVIT': "15", 'ATK': "8", 'DEF': "6", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""}
+                   enemy1 : { 'name': "POLIWHIRL", 'sprite': "4", 'LVL': "1", 'EXP': "10", 'curVIT': "15", 'maxVIT': "15", 'ATK': "8", 'DEF': "5", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
+                   enemy2 : { 'name': "UMBREON", 'sprite': "6", 'LVL': "1", 'EXP': "10", 'curVIT': "15", 'maxVIT': "15", 'ATK': "8", 'DEF': "3", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""},
+                   enemy3 : { 'name': "MUDKIPS", 'sprite': "3", 'LVL': "1", 'EXP': "10", 'curVIT': "15", 'maxVIT': "15", 'ATK': "8", 'DEF': "6", 'DEX': "3", 'FTH': "1", 'color': "red", 'PROF': "none", 'AB1': "", 'AB2': "", 'AB3': "", 'L1': "", 'L2': "", 'L3': "", 'L4': "", 'L5': ""}
                       };
 
    // Make array with all enemies, then use level & array to determine which enemy
@@ -561,7 +563,42 @@ public onButtonClick(target) {
   var blurMain = document.getElementById('battlediv');
   blurField.style.filter = 'blur(3px)';
   blurMain.style.filter = 'blur(3px)';
-  } else if (this.petAmount == this.petDeadCount) { // Do something if all pets are dead
+  if(this.petAlive1 !== "No"){ // Only give EXP to pets who are alive
+   var curEXP = parseInt(this.petStats1["curEXP"]);
+   var maxEXP = parseInt(this.petStats1["maxEXP"]);
+   this.petStats1["curEXP"] = parseInt(this.petStats1["curEXP"]) + this.expTotal;
+    if(curEXP >= maxEXP){ // If more CUR EXP than MAX, lvl up. Will be loop in future incase they LVL up more than once.
+      this.petStats1["LVL"] = parseInt(this.petStats1["LVL"]) + 1;
+      this.petStats1["curEXP"] = maxEXP - curEXP;
+      this.petStats1["maxEXP"] = maxEXP * 1.5;
+    }
+   this.storage.set('PetOneInfo', JSON.stringify(this.petStats1));
+  } 
+  
+  if(this.petAlive2 !== "No"){ 
+    var curEXP = parseInt(this.petStats2["curEXP"]);
+    var maxEXP = parseInt(this.petStats2["maxEXP"]);
+   this.petStats2["curEXP"] = curEXP + this.expTotal;
+    if(curEXP >= maxEXP){ // If more CUR EXP than MAX, lvl up. Will be loop in future incase they LVL up more than once.
+      this.petStats2["LVL"] = parseInt(this.petStats2["LVL"]) + 1;
+      this.petStats2["curEXP"] = maxEXP - curEXP;
+      this.petStats2["maxEXP"] = maxEXP * 1.5;
+      }
+   this.storage.set('PetTwoInfo', JSON.stringify(this.petStats2));
+   } 
+   
+   if(this.petAlive3 !== "No"){
+   var curEXP = parseInt(this.petStats3["curEXP"]);
+   var maxEXP = parseInt(this.petStats3["maxEXP"]);
+   this.petStats3["curEXP"] = curEXP + this.expTotal;
+    if(curEXP >= maxEXP){ // If more CUR EXP than MAX, lvl up. Will be loop in future incase they LVL up more than once.
+      this.petStats3["LVL"] = parseInt(this.petStats3["LVL"]) + 1;
+      this.petStats3["curEXP"] = maxEXP - curEXP;
+      this.petStats3["maxEXP"] = maxEXP * 1.5;
+      }
+   this.storage.set('PetThreeInfo', JSON.stringify(this.petStats3));
+   }
+  } else if (this.petAmount == this.petDeadCount) { 
   console.log("You lose!");
    this.navCtrl.pop();
   } else {
@@ -647,7 +684,7 @@ public onButtonClick(target) {
 
  if(this.petAlive3 !== "No"){
  pet3Color = this.petStats3["color"];
- parseInt(this.petStats3["curVIT"]);
+ pet3HP = parseInt(this.petStats3["curVIT"]);
  }
 
  if(moveChance < 100){ // 80% chance to ATK. Set to 100 for now, since DEF isn't implemented yet.
@@ -689,7 +726,7 @@ public onButtonClick(target) {
  return target; //Return the number of the pet targeted.
 }
 
- startFight(){
+  startFight(){
     // Make FIGHT and RESET buttons DISAPPEAR
    this.resetOrder =  false;
    this.startCombat = false;
@@ -775,8 +812,10 @@ public onButtonClick(target) {
              }else if(targetMove == 2){
              this.eneAlive2 = "No";              
              }else if(targetMove == 3){
-             this.eneAlive3 = "No";          
+             this.eneAlive3 = "No";  
              }
+             // Add EXP once this enemy dies
+             this.expTotal = this.expTotal + parseInt(currentEnemy["EXP"]);
              this.regularAttack(1, 'poke', movePet, targetMove, dmgDealt, 'dead'); 
            } else {
            // Animate attacking the target. Pet/Enemy number (1,2,3), 'poke' or 'evil', 'ATK' or 'DEF', target number (1,2,3), special (dead, none, abilities, etc.)
@@ -801,7 +840,7 @@ public onButtonClick(target) {
       // If Pet1 is dead, skip to Pet2's turn.
       this.petPhase2();
       }
- }
+  }
 
   // Enemy1's turn after Pet1 went.
  enemyPhase1(){
@@ -814,15 +853,19 @@ public onButtonClick(target) {
       }
 
       var weakColor; // What color the target is weak to
+      var target; // Used for saving stats later
 
       //Set AI
       var targetMove = this.enemyAI(currentEnemy);
       if(targetMove == 1){
-      var currentPet = this.petStats1;      
+      var currentPet = this.petStats1;
+      target = 1;
       } else if(targetMove == 2) {
-       var currentPet = this.petStats2;     
+       var currentPet = this.petStats2;  
+       target = 2;
       } else {
-       var currentPet = this.petStats3;     
+       var currentPet = this.petStats3;  
+       target = 3;
       }
 
       //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
@@ -868,6 +911,7 @@ public onButtonClick(target) {
            // Reduce enemy health by dmgDealt
            currentPet["curVIT"] = parseInt(currentPet["curVIT"]) - dmgDealt;
 
+
            if(currentPet["curVIT"] <= 0){ // If the enemy is at 0 health or less, he died.
              // Skip the enemy's attack and it's now Pet2's turn, if he's alive
              currentPet["curVIT"] = 0;
@@ -877,10 +921,26 @@ public onButtonClick(target) {
              }else if(targetMove == 2){
              this.petAlive2 = "No";              
              }else if(targetMove == 3){
-             this.petAlive3 = "No";          
+             this.petAlive3 = "No"; 
+                // Update stats
+                if(target == 1){
+                this.storage.set('PetOneInfo', JSON.stringify(currentPet));             
+                }else if(target == 2){
+                this.storage.set('PetTwoInfo', JSON.stringify(currentPet));             
+                }else if(target == 3){
+                 this.storage.set('PetThreeInfo', JSON.stringify(currentPet));             
+                }
              }
              this.regularAttack(1, 'evil', 'ATK', targetMove, dmgDealt, 'dead'); 
            } else {
+                // Update stats
+                if(target == 1){
+                this.storage.set('PetOneInfo', JSON.stringify(currentPet)); 
+                }else if(target == 2){
+                this.storage.set('PetTwoInfo', JSON.stringify(currentPet));             
+                }else if(target == 3){
+                 this.storage.set('PetThreeInfo', JSON.stringify(currentPet));             
+                }
              this.regularAttack(1, 'evil', 'ATK', targetMove, dmgDealt, 'none'); 
            }
              setTimeout(() => {
@@ -985,6 +1045,8 @@ public onButtonClick(target) {
              }else if(targetMove == 3){
              this.eneAlive3 = "No";          
              }
+             // Add EXP once this enemy dies
+             this.expTotal = this.expTotal + parseInt(currentEnemy["EXP"]);
              this.regularAttack(2, 'poke', movePet, targetMove, dmgDealt, 'dead');
            } else {
               this.regularAttack(2, 'poke', movePet, targetMove, dmgDealt, 'none');
@@ -1020,6 +1082,7 @@ public onButtonClick(target) {
       }
 
       var weakColor; // What color the target is weak to
+      var target;
 
       //Set AI
       var targetMove = this.enemyAI(currentEnemy);
@@ -1085,9 +1148,25 @@ public onButtonClick(target) {
              }else if(targetMove == 3){
              this.petAlive3 = "No";          
              }
+                // Update stats
+                if(target == 1){
+                this.storage.set('PetOneInfo', JSON.stringify(currentPet)); 
+                }else if(target == 2){
+                this.storage.set('PetTwoInfo', JSON.stringify(currentPet));             
+                }else if(target == 3){
+                 this.storage.set('PetThreeInfo', JSON.stringify(currentPet));             
+                }
             // Animate attacking the target. Pet/Enemy number (1,2,3), 'poke' or 'evil', 'ATK' or 'DEF', target number (1,2,3)
             this.regularAttack(2, 'evil', 'ATK', targetMove, dmgDealt, 'dead'); 
            } else {
+                // Update stats
+                if(target == 1){
+                this.storage.set('PetOneInfo', JSON.stringify(currentPet)); 
+                }else if(target == 2){
+                this.storage.set('PetTwoInfo', JSON.stringify(currentPet));             
+                }else if(target == 3){
+                 this.storage.set('PetThreeInfo', JSON.stringify(currentPet));             
+                }
             this.regularAttack(2, 'evil', 'ATK', targetMove, dmgDealt, 'none'); 
            }
              setTimeout(() => {
@@ -1192,6 +1271,8 @@ public onButtonClick(target) {
              }else if(targetMove == 3){
              this.eneAlive3 = "No";          
              }
+             // Add EXP once this enemy dies
+             this.expTotal = this.expTotal + parseInt(currentEnemy["EXP"]);
            // Reduce phase amount by 1 since a participant died.
              this.regularAttack(3, 'poke', movePet, targetMove, dmgDealt, 'dead');
            } else {
@@ -1239,6 +1320,7 @@ public onButtonClick(target) {
       }
 
       var weakColor; // What color the target is weak to
+      var target;
 
       //Get color weakness. Red > Green > Blue > Red. Else if Purple or Gold, ignore.
       if(currentEnemy["color"] == "red"){
@@ -1292,10 +1374,26 @@ public onButtonClick(target) {
              }else if(targetMove == 2){
              this.petAlive2 = "No";              
              }else if(targetMove == 3){
-             this.petAlive3 = "No";          
+             this.petAlive3 = "No";  
+                // Update stats
+                if(target == 1){
+                this.storage.set('PetOneInfo', JSON.stringify(currentPet)); 
+                }else if(target == 2){
+                this.storage.set('PetTwoInfo', JSON.stringify(currentPet));             
+                }else if(target == 3){
+                 this.storage.set('PetThreeInfo', JSON.stringify(currentPet));             
+                }
              }
              this.regularAttack(3, 'evil', 'ATK', targetMove, dmgDealt, 'dead');
              } else {
+                // Update stats
+                if(target == 1){
+                this.storage.set('PetOneInfo', JSON.stringify(currentPet)); 
+                }else if(target == 2){
+                this.storage.set('PetTwoInfo', JSON.stringify(currentPet));             
+                }else if(target == 3){
+                 this.storage.set('PetThreeInfo', JSON.stringify(currentPet));             
+                }
                this.regularAttack(3, 'evil', 'ATK', targetMove, dmgDealt, 'none');
              }
 
