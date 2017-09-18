@@ -8,9 +8,8 @@
     "\\src\\pages\\battletemp",
     "\\src\\pages\\explore",
     "\\src\\pages\\exploretemp",
-    "\\src\\pages\\hangar",
-    "\\src\\pages\\viewpetone"
+    "\\src\\pages\\hangar"
   ],
-  "SelectedNode": "\\src\\pages\\battle\\battle.ts",
+  "SelectedNode": "\\src\\pages\\exploretemp\\exploretemp.scss",
   "PreviewInSolutionExplorer": false
 }

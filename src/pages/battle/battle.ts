@@ -550,9 +550,9 @@ public onButtonClick(target) {
   // Reset attack turns and make buttons come back
  resetTargets(){
    // Reset combat lines
-   var lineIMG1 = document.getElementById('bLine1') as HTMLImageElement;;
-   var lineIMG2 = document.getElementById('bLine2') as HTMLImageElement;;
-   var lineIMG3 = document.getElementById('bLine3') as HTMLImageElement;;
+   var lineIMG1 = document.getElementById('bLine1') as HTMLImageElement;
+   var lineIMG2 = document.getElementById('bLine2') as HTMLImageElement;
+   var lineIMG3 = document.getElementById('bLine3') as HTMLImageElement;
    lineIMG1.src = '../assets/combat/linenone.png';
    lineIMG2.src = '../assets/combat/linenone.png';
    lineIMG3.src = '../assets/combat/linenone.png';

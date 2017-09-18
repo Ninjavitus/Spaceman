@@ -1,6 +1,6 @@
 ﻿import { Component } from '@angular/core';
 import { HangarPage } from '../hangar/hangar';
-import { BattlePage } from '../battle/battle';
+import { BattletempPage } from '../battletemp/battletemp';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 /**
@@ -26,26 +26,40 @@ export class ExploretempPage {
   public MissionSelect1: boolean = false; //Make list appear
   public MissionSelect2: boolean = false; 
   public MissionSelect3: boolean = false;
+  public MissionSelect4: boolean = false;
 
   public MissionInfoDiv: boolean = false; // Make Mission info appear
   
-  // When they choose which planet to visit
+  // When they choose which Training they click on. Called Planets 'cause I'm lazy
   setPlanet(planet){
-  if(planet == 'grass'){
+  if(planet == 'dex'){
   this.MissionSelect1 = true;
   this.MissionSelect2 = false;
   this.MissionSelect3 = false;
-  }else if(planet == 'stone'){
+  this.MissionSelect4 = false;
+  }else if(planet == 'atk'){
   this.MissionSelect1 = false;
   this.MissionSelect2 = true;
-  this.MissionSelect3 = false;  
-  }else if(planet == 'blood'){
+  this.MissionSelect3 = false;
+  this.MissionSelect4 = false;
+  }else if(planet == 'def'){
   this.MissionSelect1 = false;
   this.MissionSelect2 = false;
-  this.MissionSelect3 = true;  
+  this.MissionSelect3 = true;
+  this.MissionSelect4 = false;
+  }else if(planet == 'vit') {
+  this.MissionSelect1 = false;
+  this.MissionSelect2 = false;
+  this.MissionSelect3 = false;
+  this.MissionSelect4 = true;  
   }
   this.planetName = planet;
   }
+
+ionViewDidLoad() {
+  var petStats = this.navParams.get('petStats');
+  var petNum = this.navParams.get('petNum');
+}
 
   cancelButton(){
      this.MissionInfoDiv = false;
@@ -68,11 +82,13 @@ export class ExploretempPage {
   // Change planet and start the battle
   explorePlanet() {
   // Send them to battle page and pass the planet as variable
-  this.navCtrl.push(BattlePage, {planet: this.planetName, level: this.missionLVL});
+  var petStats = this.navParams.get('petStats');
+  var petNum = this.navParams.get('petNum');
+  this.navCtrl.push(BattletempPage, {planet: this.planetName, level: this.missionLVL, targetNum: petNum, petInfo: petStats});
   }
 
   toHangar(){
-      this.navCtrl.push(HangarPage);
+      this.navCtrl.pop();
   }
 
 }

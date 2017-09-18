@@ -82,6 +82,12 @@ white-space: nowrap;
   background-color: rgba(255, 0, 0, 0.45);
 }
 
+#M4{
+  width:90%;
+  text-align: center;
+  background-color: rgba(238, 118, 0, 0.45);
+}
+
 #missionInfo {
   position:absolute;
   width:70%;
@@ -122,6 +128,12 @@ white-space: nowrap;
 
 .mainhangar {
   background-image: url('/assets/hangar/dayc.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.trainmain {
+  background-image: url('/assets/planets/galaxy.gif');
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -446,7 +458,7 @@ filter: grayscale(0%);
 
 #pilotViewbg {
   width: 96%;
-  height: 99%;
+  height: 470px;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.70);
   border: 1px solid #000000;
@@ -517,7 +529,7 @@ width:100%;
 height:100%;
 }
 
-#pilotPageStats {
+#pilotPageStats, #pilotPageStatsStatus {
 position: absolute;
 background-color: rgba(0, 0, 0, 0.65);
 color: #FFFFFF;
@@ -530,7 +542,7 @@ border-radius: 2.5px;
 text-align: center;
 }
 
-#pilotPageRight {
+#pilotPageRight, #pilotPageRightHunger, #pilotPageRightThirst {
 position: absolute;
 background-color: rgba(0, 0, 0, 0.65);
 color: #FFFFFF;

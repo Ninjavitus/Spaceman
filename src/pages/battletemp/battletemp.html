@@ -8,54 +8,38 @@
 </ion-header>
 <ion-content id="battlemain">
 <div ion-fixed style="width:100%; height:100%">
-<div *ngIf="victoryScreen" id="expScreen"><button ion-button id="hangar" (click)="backToExplore();">BACK TO HANGAR</button><font face="BebasNeue"><h1 id="VictoryTxt">Victory!</h1><p id="missionTxt">Mission 10 complete!</p><p id="expGainedTxt">365 EXP Gained</p></font>
+<div *ngIf="victoryScreen" id="expScreen"><font face="BebasNeue"><h1 id="VictoryTxt">Victory!</h1><p id="missionTxt">Mission 10 complete!</p><p id="expGainedTxt">365 EXP Gained</p></font>
 <div id="expBarAll">
 <div *ngIf="!expPet1" id="expPet1"><img id="expImg1" src="../assets/hangar/1.png" style="width: 70px; height: 70px;" /><div id="expBar1"><div id="expAmount1"></div></div></div>
-<div *ngIf="!expPet2" id="expPet2"><img id="expImg2" src="../assets/hangar/2.png" style="width: 70px; height: 70px;" /><div id="expBar2"><div id="expAmount2"></div></div></div>
-<div *ngIf="!expPet3" id="expPet3"><img id="expImg3" src="../assets/hangar/3.png" style="width: 70px; height: 70px;" /><div id="expBar3"><div id="expAmount3"></div></div></div>
 </div>
 <div id="vicLoot"></div>
 <button ion-button id="repeat" color="danger" (click)="nextMission();">REPEAT MISSION</button>
 <button ion-button id="next" color="secondary" (click)="repeatMission();">NEXT MISSION</button>
-<button ion-button id="explore" (click)="backToHangar();">EXPLORE MORE</button>
+<button ion-button id="explore" (click)="backToExplore();">EXPLORE MORE</button>
 <div 
 </div>
 <div *ngIf="defeatScreen" id="expScreen"></div>
 <div id="battlefield">
 <div id="bfPet1" (click)="onButtonClick(1);"></div>
-<div id="bfPet2" (click)="onButtonClick(2);"></div>
-<div id="bfPet3" (click)="onButtonClick(3);"></div>
 <div id="bfEvil1" (click)="chooseTarget(1);"></div>
 <div id="bfEvil2" (click)="chooseTarget(2);"></div>
 <div id="bfEvil3" (click)="chooseTarget(3);"></div>
 <h1 id="dmgPet1"></h1>
-<h1 id="dmgPet2"></h1>
-<h1 id="dmgPet3"></h1>
 <h1 id="dmgEvil1"></h1>
 <h1 id="dmgEvil2"></h1>
 <h1 id="dmgEvil3"></h1>
 </div>
 <div id="battlediv">
 <img id="bLine1" src="../assets/combat/linenone.png" style="width: 320px; height: 260px;" />
-<img id="bLine2" src="../assets/combat/linenone.png" style="width: 320px; height: 260px;" />
-<img id="bLine3" src="../assets/combat/linenone.png" style="width: 320px; height: 260px;" />
 <ion-input *ngIf="buttonClicked" type="text" value=""></ion-input>
-<ion-input *ngIf="buttonClicked2" type="text" value=""></ion-input>
-<ion-input *ngIf="buttonClicked3" type="text" value=""></ion-input>
 <div *ngIf="turnBG1" id="turnBGG1"></div>
-<div *ngIf="turnBG2" id="turnBGG2"></div>
-<div *ngIf="turnBG3" id="turnBGG3"></div>
 <div *ngIf="buttonClicked"><button ion-button id="defButton1" (click)="onButtonClick(1);">DEF</button></div>
-<div *ngIf="buttonClicked2"><button ion-button id="defButton2" (click)="onButtonClick(2);">DEF</button></div>
-<div *ngIf="buttonClicked3"><button ion-button id="defButton3" (click)="onButtonClick(3);">DEF</button></div>
 <div *ngIf="showEnemy1"><button ion-button id="atkButton1" (click)="chooseTarget(1);">ATK</button></div>
 <div *ngIf="showEnemy2"><button ion-button id="atkButton2" (click)="chooseTarget(2);">ATK</button></div>
 <div *ngIf="showEnemy3"><button ion-button id="atkButton3" (click)="chooseTarget(3);">ATK</button></div>
 <div *ngIf="startCombat"><button ion-button id="startBattle" color="danger" (click)="startFight();">FIGHT</button></div>
 <div *ngIf="resetOrder"><button ion-button id="resetFight" (click)="resetTargets();">RESET</button></div>
 <div id="pokeView1"></div>
-<div id="pokeView2"></div>
-<div id="pokeView3"></div>
 <div id="evilView1"></div>
 <div id="evilView2"></div>
 <div id="evilView3"></div>

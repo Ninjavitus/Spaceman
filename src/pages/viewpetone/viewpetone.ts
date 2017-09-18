@@ -1,7 +1,8 @@
 ﻿import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { HangarPage } from '../hangar/hangar';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { ExploretempPage } from '../exploretemp/exploretemp';
+import { IonicPage, ModalController, NavController, NavParams } from 'ionic-angular';
 
 /**
  * Generated class for the ViewpetonePage page.
@@ -17,8 +18,16 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class ViewpetonePage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController) {
   }
+
+  public petStats1: any = "None"; // Saves allied pet stats on page load
+  public petStats2: any = "None";
+  public petStats3: any = "None";
+
+  public petAlive1: any = "No"; // Saves if pet is alive or not. Will be set to yes on page load
+  public petAlive2: any = "No";
+  public petAlive3: any = "No";
 
   updateTime(){
     // UTC Time. Resets day at 8 PM EST instead of midnight.
@@ -81,24 +90,189 @@ export class ViewpetonePage {
   this.storage.get('PilotInfo').then((data) => {
   var profileInfo = JSON.parse(data); 
 
-  if(profileInfo["Pet1"] = "Yes"){
+  if(profileInfo["Pet1"] == "Yes"){
   setTimeout(() => {
   this.petSlide1();
+ // SET PET1 STATS, if they have pet1
+ this.storage.get('PetOneInfo').then((data1) => {
+ this.petStats1 = JSON.parse(data1);
+ if(this.petStats1 !== 'None'){
+ if(parseInt(this.petStats1['curVIT']) > 0){ // If health greater than 0, pet is alive and we can spend energy on him.
+ this.petAlive1 = 'Yes';
+ }
+ }
+ });
   }, 100); 
   }
 
-  if(profileInfo["Pet2"] = "Yes"){
+  if(profileInfo["Pet2"] == "Yes"){
   setTimeout(() => {
   this.petSlide2();
+ // SET PET2 STATS
+ this.storage.get('PetTwoInfo').then((data2) => {
+ this.petStats2 = JSON.parse(data2);
+ if(this.petStats2 !== 'None'){
+ if(parseInt(this.petStats2['curVIT']) > 0){ // If health greater than 0, pet is alive and we can spend energy on him.
+ this.petAlive2 = 'Yes';
+ }
+ }
+ });
   }, 100); 
   }
 
-  if(profileInfo["Pet3"] = "Yes"){
+  if(profileInfo["Pet3"] == "Yes"){
   setTimeout(() => {
   this.petSlide3();
+ // SET PET3 STATS
+ this.storage.get('PetThreeInfo').then((data3) => {
+ this.petStats3 = JSON.parse(data3);
+ if(this.petStats3 !== 'None'){
+ if(parseInt(this.petStats3['curVIT']) > 0){ // If health greater than 0, pet is alive and we can spend energy on him.
+ this.petAlive3 = 'Yes';
+ }
+ }
+ });
   }, 100); 
   }
  });
+}
+
+// FEED pet button
+feedPet(num) {
+var currentPet;
+ if(num == 1){
+ currentPet = this.petStats1;
+   if(this.petAlive1 !== 'No'){
+    currentPet["status"] = 'fed';
+    document.getElementById("pilotPageStatsStatus").innerText = currentPet["status"];
+    // Save the changes
+    this.storage.set('PetOneInfo', JSON.stringify(currentPet));
+    } else {
+     console.log('This pet is dead.')
+    }
+ } else if(num == 2) {
+ currentPet = this.petStats2;
+   if(this.petAlive2 !== 'No'){
+    currentPet["status"] = 'hungry';
+    document.getElementById("pilotPageStatsStatus").innerText = currentPet["status"];
+    // Save the changes
+    this.storage.set('PetTwoInfo', JSON.stringify(currentPet));
+    } else {
+     console.log('This pet is dead.')
+    }
+ } else if(num == 3) {
+ currentPet = this.petStats3;
+   if(this.petAlive3 !== 'No'){
+    currentPet["status"] = 'full';
+    document.getElementById("pilotPageStatsStatus").innerText = currentPet["status"];
+    // Save the changes
+    this.storage.set('PetThreeInfo', JSON.stringify(currentPet));
+    } else {
+     console.log('This pet is dead.')
+    }
+ }
+}
+
+// SLEEP pet button
+sleepPet(num) {
+var currentPet;
+ if(num == 1){
+ currentPet = this.petStats1;
+   if(this.petAlive1 !== 'No'){
+    currentPet["status"] = 'asleep';
+    document.getElementById("pilotPageStatsStatus").innerText = currentPet["status"];
+    // Save the changes
+    this.storage.set('PetOneInfo', JSON.stringify(currentPet));
+    } else {
+     console.log('This pet is dead.')
+    }
+ } else if(num == 2) {
+ currentPet = this.petStats2;
+   if(this.petAlive2 !== 'No'){
+    currentPet["status"] = 'asleep';
+    document.getElementById("pilotPageStatsStatus").innerText = currentPet["status"];
+    // Save the changes
+    this.storage.set('PetTwoInfo', JSON.stringify(currentPet));
+    } else {
+     console.log('This pet is dead.')
+    }
+ } else if(num == 3) {
+ currentPet = this.petStats3;
+   if(this.petAlive3 !== 'No'){
+    currentPet["status"] = 'asleep';
+    document.getElementById("pilotPageStatsStatus").innerText = currentPet["status"];
+    // Save the changes
+    this.storage.set('PetThreeInfo', JSON.stringify(currentPet));
+    } else {
+     console.log('This pet is dead.')
+    }
+ }
+}
+
+// CLEAN pet button
+cleanPet(num) {
+var currentPet;
+ if(num == 1){
+ currentPet = this.petStats1;
+   if(this.petAlive1 !== 'No'){
+    currentPet["status"] = 'groomed';
+    document.getElementById("pilotPageStatsStatus").innerText = currentPet["status"];
+    // Save the changes
+    this.storage.set('PetOneInfo', JSON.stringify(currentPet));
+    } else {
+     console.log('This pet is dead.')
+    }
+ } else if(num == 2) {
+ currentPet = this.petStats2;
+   if(this.petAlive2 !== 'No'){
+    currentPet["status"] = 'clean';
+    document.getElementById("pilotPageStatsStatus").innerText = currentPet["status"];
+    // Save the changes
+    this.storage.set('PetTwoInfo', JSON.stringify(currentPet));
+    } else {
+     console.log('This pet is dead.')
+    }
+ } else if(num == 3) {
+ currentPet = this.petStats3;
+   if(this.petAlive3 !== 'No'){
+    currentPet["status"] = 'groomed';
+    document.getElementById("pilotPageStatsStatus").innerText = currentPet["status"];
+    // Save the changes
+    this.storage.set('PetThreeInfo', JSON.stringify(currentPet));
+    } else {
+     console.log('This pet is dead.')
+    }
+ }
+}
+
+// TRAIN pet button
+trainPet(num) {
+var currentPet;
+ if(num == 1){
+ currentPet = this.petStats1;
+   if(this.petAlive1 !== 'No'){
+      let training = this.modalCtrl.create(ExploretempPage, {petStats: currentPet, petNum: num});
+      training.present(); 
+    } else {
+     console.log('This pet is dead.')
+    }
+ } else if(num == 2) {
+ currentPet = this.petStats2;
+   if(this.petAlive2 !== 'No'){
+      let training = this.modalCtrl.create(ExploretempPage, {petStats: currentPet, petNum: num});
+      training.present(); 
+    } else {
+     console.log('This pet is dead.')
+    }
+ } else if(num == 3) {
+ currentPet = this.petStats3;
+   if(this.petAlive3 !== 'No'){
+      let training = this.modalCtrl.create(ExploretempPage, {petStats: currentPet, petNum: num});
+      training.present(); 
+    } else {
+     console.log('This pet is dead.')
+    }
+ }
 }
 
 petSlide1() {
@@ -127,12 +301,13 @@ petSlide1() {
   var petDEF = '<p id="pilotPageStats"><font color="#00cd00"><b>DEF</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEF"] + '</p><br>';
   var petDEX = '<p id="pilotPageStats"><font color="#007FFF"><b>SPD</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEX"] + '</p><br>';
   var petLVL = '<p id="pilotPageStats"><b>LEVEL</b>&nbsp;&nbsp;' + pet["LVL"] + '</p><br>';
+  var petStatus = '<br><p id="pilotPageStatsStatus">' + pet["status"] + '</p><br>'; 
   //var pilotEnergy = '<br><p id="pilotPageStats">' + pet["LVL"] + '</p><br>';
 
   // Set pet likes/dislikes & hobbies
-  var petHunger = '<p id="pilotPageRight">' + pet["curHUNGER"] + ' / ' + pet["maxHUNGER"] + '</p><br>';
-  var petThirst = '<p id="pilotPageRight">' + pet["curTHIRST"] + ' / ' + pet["maxTHIRST"] + '</p><br>'; // Used as Energy for now
-  var petLikes = '<br><p id="pilotPageRight">' + pet["likes"] + '</p><br>';
+  var petHunger = '<p id="pilotPageRightHunger">' + pet["curHUNGER"] + ' / ' + pet["maxHUNGER"] + '</p><br>';
+  var petThirst = '<p id="pilotPageRightThirst">' + pet["curTHIRST"] + ' / ' + pet["maxTHIRST"] + '</p><br>'; // Used as Energy for now
+  var petLikes = '<p id="pilotPageRight">' + pet["likes"] + '</p><br>';
   var petDislikes = '<p id="pilotPageRight">' + pet["dislikes"] + '</p><br>'; 
   var petHobby = '<p id="pilotPageRight">' + pet["hobby"] + '</p><br>'; 
 
@@ -140,7 +315,7 @@ petSlide1() {
   document.getElementById("whitetext").innerText = petName;
 
   // Set player stats on page
-  document.getElementById("pilotStatsDiv").innerHTML = petLVL + petVIT + petATK + petDEF + petDEX;
+  document.getElementById("pilotStatsDiv").innerHTML = petLVL + petVIT + petATK + petDEF + petDEX + petStatus;
   document.getElementById("pilotRightStatsDiv").innerHTML = petHunger + petThirst + petLikes + petDislikes + petHobby;
 
   // Adjust div width based on EXP %
@@ -182,12 +357,13 @@ petSlide2() {
   var petDEF = '<p id="pilotPageStats"><font color="#00cd00"><b>DEF</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEF"] + '</p><br>';
   var petDEX = '<p id="pilotPageStats"><font color="#007FFF"><b>SPD</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEX"] + '</p><br>';
   var petLVL = '<p id="pilotPageStats"><b>LEVEL</b>&nbsp;&nbsp;' + pet["LVL"] + '</p><br>';
+  var petStatus = '<br><p id="pilotPageStatsStatus">' + pet["status"] + '</p><br>'; 
   //var pilotEnergy = '<br><p id="pilotPageStats">' + pet["LVL"] + '</p><br>';
 
   // Set pet likes/dislikes & hobbies
-  var petHunger = '<p id="pilotPageRight">' + pet["curHUNGER"] + ' / ' + pet["maxHUNGER"] + '</p><br>';
-  var petThirst = '<p id="pilotPageRight">' + pet["curTHIRST"] + ' / ' + pet["maxTHIRST"] + '</p><br>'; // Used as Energy for now
-  var petLikes = '<br><p id="pilotPageRight">' + pet["likes"] + '</p><br>';
+  var petHunger = '<p id="pilotPageRightHunger">' + pet["curHUNGER"] + ' / ' + pet["maxHUNGER"] + '</p><br>';
+  var petThirst = '<p id="pilotPageRightThirst">' + pet["curTHIRST"] + ' / ' + pet["maxTHIRST"] + '</p><br>'; // Used as Energy for now
+  var petLikes = '<p id="pilotPageRight">' + pet["likes"] + '</p><br>';
   var petDislikes = '<p id="pilotPageRight">' + pet["dislikes"] + '</p><br>'; 
   var petHobby = '<p id="pilotPageRight">' + pet["hobby"] + '</p><br>'; 
 
@@ -195,7 +371,7 @@ petSlide2() {
   document.getElementById("whitetext2").innerText = petName;
 
   // Set player stats on page
-  document.getElementById("pilotStatsDiv2").innerHTML = petLVL + petVIT + petATK + petDEF + petDEX;
+  document.getElementById("pilotStatsDiv2").innerHTML = petLVL + petVIT + petATK + petDEF + petDEX + petStatus;
   document.getElementById("pilotRightStatsDiv2").innerHTML = petHunger + petThirst + petLikes + petDislikes + petHobby;
 
   // Adjust div width based on EXP %
@@ -237,12 +413,13 @@ petSlide3() {
   var petDEF = '<p id="pilotPageStats"><font color="#00cd00"><b>DEF</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEF"] + '</p><br>';
   var petDEX = '<p id="pilotPageStats"><font color="#007FFF"><b>SPD</b>&nbsp;&nbsp;&nbsp;</font>' + pet["DEX"] + '</p><br>';
   var petLVL = '<p id="pilotPageStats"><b>LEVEL</b>&nbsp;&nbsp;' + pet["LVL"] + '</p><br>';
+  var petStatus = '<br><p id="pilotPageStatsStatus">' + pet["status"] + '</p><br>'; 
   //var pilotEnergy = '<br><p id="pilotPageStats">' + pet["LVL"] + '</p><br>';
 
   // Set pet likes/dislikes & hobbies
-  var petHunger = '<p id="pilotPageRight">' + pet["curHUNGER"] + ' / ' + pet["maxHUNGER"] + '</p><br>';
-  var petThirst = '<p id="pilotPageRight">' + pet["curTHIRST"] + ' / ' + pet["maxTHIRST"] + '</p><br>'; // Used as Energy for now
-  var petLikes = '<br><p id="pilotPageRight">' + pet["likes"] + '</p><br>';
+  var petHunger = '<p id="pilotPageRightHunger">' + pet["curHUNGER"] + ' / ' + pet["maxHUNGER"] + '</p><br>';
+  var petThirst = '<p id="pilotPageRightThirst">' + pet["curTHIRST"] + ' / ' + pet["maxTHIRST"] + '</p><br>'; // Used as Energy for now
+  var petLikes = '<p id="pilotPageRight">' + pet["likes"] + '</p><br>';
   var petDislikes = '<p id="pilotPageRight">' + pet["dislikes"] + '</p><br>'; 
   var petHobby = '<p id="pilotPageRight">' + pet["hobby"] + '</p><br>'; 
 
@@ -250,7 +427,7 @@ petSlide3() {
   document.getElementById("whitetext3").innerText = petName;
 
   // Set player stats on page
-  document.getElementById("pilotStatsDiv3").innerHTML = petLVL + petVIT + petATK + petDEF + petDEX;
+  document.getElementById("pilotStatsDiv3").innerHTML = petLVL + petVIT + petATK + petDEF + petDEX + petStatus;
   document.getElementById("pilotRightStatsDiv3").innerHTML = petHunger + petThirst + petLikes + petDislikes + petHobby;
 
   // Adjust div width based on EXP %

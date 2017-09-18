@@ -8,68 +8,66 @@
 </ion-header>
 
 
-<ion-content id="planetmain">
+<ion-content class="trainmain">
 <div ion-fixed style="width:100%; height:100%">
 <div *ngIf="MissionInfoDiv" id="missionInfo"><div id="MissionInfoDivMini"></div><button ion-button id="startFightButton" (click)="explorePlanet();" color="secondary">FIGHT</button>         <button ion-button id="cancelButton" (click)="cancelButton();" color="danger">CANCEL</button></div>
 <ion-slides id="planetSlide">
   <ion-slide>
   <div id="PlanetBG">
-    <img id="planet1" src="../assets/planets/1.png" (click)="setPlanet('grass');" style="width: 220px; height: 220px;" />
+    <img id="planet1" src="../assets/planets/1.png" (click)="setPlanet('dex');" style="width: 220px; height: 220px;" />
   </div>
   </ion-slide>
   <ion-slide>
   <div id="PlanetBG">
-    <img id="planet2" src="../assets/planets/3.png" (click)="setPlanet('stone');" style="width: 220px; height: 220px;" />
+    <img id="planet2" src="../assets/planets/4.png" (click)="setPlanet('atk');" style="width: 220px; height: 220px;" />
   </div>
   </ion-slide>
   <ion-slide>
   <div id="PlanetBG">
-    <img id="planet3" src="../assets/planets/8.png" (click)="setPlanet('blood');" style="width: 220px; height: 220px;" />
+    <img id="planet2" src="../assets/planets/8.png" (click)="setPlanet('def');" style="width: 220px; height: 220px;" />
+  </div>
+  </ion-slide>
+  <ion-slide>
+  <div id="PlanetBG">
+    <img id="planet3" src="../assets/planets/3.png" (click)="setPlanet('vit');" style="width: 220px; height: 220px;" />
   </div>
   </ion-slide>
 </ion-slides>
-<button ion-button id="underPlanets" (click)="toHangar();">BACK TO HANGAR</button>
+<button ion-button id="underPlanets" (click)="toHangar();">BACK TO PETS</button>
 <div id="MissionBG">
 <ion-scroll scrollY="true" id="missionScroll" style="width: 100%; height: 100%">
   <ul *ngIf="MissionSelect1" id="MissionList">
-  <li><div id="M1" (click)="chooseMission('0');">Wild Encounter ★</div></li>
-  <li><div id="M1" (click)="chooseMission('1');">Mission I</div></li>
-  <li><div id="M1" (click)="chooseMission('2');">Mission II</div></li>
-  <li><div id="M1" (click)="chooseMission('3');">Mission III</div></li>
-  <li><div id="M1" (click)="chooseMission('4');">Mission IV</div></li>
-  <li><div id="M1" (click)="chooseMission('5');">Mission V</div></li>
-  <li><div id="M1" (click)="chooseMission('6');">Mission VI</div></li>
-  <li><div id="M1" (click)="chooseMission('7');">Mission VII</div></li>
-  <li><div id="M1" (click)="chooseMission('8');">Mission VIII</div></li>
-  <li><div id="M1" (click)="chooseMission('9');">Mission IX</div></li>
-  <li><div id="M1" (click)="chooseMission('10');">Mission X</div></li>
+  <li><div id="M1" (click)="chooseMission('0');">Free Training ★</div></li>
+  <li><div id="M1" (click)="chooseMission('1');">Dexterity I</div></li>
+  <li><div id="M1" (click)="chooseMission('2');">Dexterity II</div></li>
+  <li><div id="M1" (click)="chooseMission('3');">Dexterity III</div></li>
+  <li><div id="M1" (click)="chooseMission('4');">Dexterity IV</div></li>
+  <li><div id="M1" (click)="chooseMission('5');">Dexterity V</div></li>
 </ul>
   <ul *ngIf="MissionSelect2" id="MissionList">
-  <li><div id="M2" (click)="chooseMission('0');">Wild Encounter ★</div></li>
-  <li><div id="M2" (click)="chooseMission('1');">Mission I</div></li>
-  <li><div id="M2" (click)="chooseMission('2');">Mission II</div></li>
-  <li><div id="M2" (click)="chooseMission('3');">Mission III</div></li>
-  <li><div id="M2" (click)="chooseMission('4');">Mission IV</div></li>
-  <li><div id="M2" (click)="chooseMission('5');">Mission V</div></li>
-  <li><div id="M2" (click)="chooseMission('6');">Mission VI</div></li>
-  <li><div id="M2" (click)="chooseMission('7');">Mission VII</div></li>
-  <li><div id="M2" (click)="chooseMission('8');">Mission VIII</div></li>
-  <li><div id="M2" (click)="chooseMission('9');">Mission IX</div></li>
-  <li><div id="M2" (click)="chooseMission('10');">Mission X</div></li>
+  <li><div id="M2" (click)="chooseMission('0');">Free Training ★</div></li>
+  <li><div id="M2" (click)="chooseMission('1');">Vitality I</div></li>
+  <li><div id="M2" (click)="chooseMission('2');">Vitality II</div></li>
+  <li><div id="M2" (click)="chooseMission('3');">Vitality III</div></li>
+  <li><div id="M2" (click)="chooseMission('4');">Vitality IV</div></li>
+  <li><div id="M2" (click)="chooseMission('5');">Vitality V</div></li>
 </ul>  
   <ul *ngIf="MissionSelect3" id="MissionList">
-  <li><div id="M3" (click)="chooseMission('0');">Wild Encounter ★</div></li>
-  <li><div id="M3" (click)="chooseMission('1');">Mission I</div></li>
-  <li><div id="M3" (click)="chooseMission('2');">Mission II</div></li>
-  <li><div id="M3" (click)="chooseMission('3');">Mission III</div></li>
-  <li><div id="M3" (click)="chooseMission('4');">Mission IV</div></li>
-  <li><div id="M3" (click)="chooseMission('5');">Mission V</div></li>
-  <li><div id="M3" (click)="chooseMission('6');">Mission VI</div></li>
-  <li><div id="M3" (click)="chooseMission('7');">Mission VII</div></li>
-  <li><div id="M3" (click)="chooseMission('8');">Mission VIII</div></li>
-  <li><div id="M3" (click)="chooseMission('9');">Mission IX</div></li>
-  <li><div id="M3" (click)="chooseMission('10');">Mission X</div></li>
-</ul>  
+  <li><div id="M3" (click)="chooseMission('0');">Free Training ★</div></li>
+  <li><div id="M3" (click)="chooseMission('1');">Strength I</div></li>
+  <li><div id="M3" (click)="chooseMission('2');">Strength II</div></li>
+  <li><div id="M3" (click)="chooseMission('3');">Strength III</div></li>
+  <li><div id="M3" (click)="chooseMission('4');">Strength IV</div></li>
+  <li><div id="M3" (click)="chooseMission('5');">Strength V</div></li>
+</ul> 
+  <ul *ngIf="MissionSelect4" id="MissionList">
+  <li><div id="M4" (click)="chooseMission('0');">Free Training ★</div></li>
+  <li><div id="M4" (click)="chooseMission('1');">Defence I</div></li>
+  <li><div id="M4" (click)="chooseMission('2');">Defence II</div></li>
+  <li><div id="M4" (click)="chooseMission('3');">Defence III</div></li>
+  <li><div id="M4" (click)="chooseMission('4');">Defence IV</div></li>
+  <li><div id="M4" (click)="chooseMission('5');">Defence V</div></li>
+</ul> 
 </ion-scroll>
 </div>
 </div>
